@@ -3,13 +3,13 @@ import "reflect-metadata"
 import { createSchema, createYoga } from 'graphql-yoga'
 import { createServer } from 'node:http'
 import { loadFile } from 'graphql-import-files';
-//import { resolvers } from "./resolver"
+import { resolvers } from "./resolver"
 
 
 const typeDefs = loadFile('./schema.graphql') 
 
 const yoga = createYoga({
-  //schema: createSchema({ typeDefs, resolvers }),
+  schema: createSchema({ typeDefs, resolvers })
 })
 
 const server = createServer(yoga)
