@@ -19,4 +19,4 @@ export const resolvers: resolverMap = {
             return true
         }
         }
-    };
+    }
