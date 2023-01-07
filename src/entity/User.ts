@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryColumn, BeforeInsert, BaseEntity } from "typeorm";
 import { uuid } from 'uuidv4';
 
-@Entity()
+@Entity("users")
 export class User extends BaseEntity{
 
     @PrimaryColumn("uuid")
