@@ -12,10 +12,11 @@ export const resolvers: resolverMap = {
         register: async (_, { email, password }: GQL.IRegisterOnMutationArguments) => {
             const hashedPass = await bcryptjs.hash(password, 10)
             console.log(hashedPass)
-            await User.create({
+            const user = await User.create({
                 email,
                 password: hashedPass
             })
+            await user.save()
             return true
         }
         }
