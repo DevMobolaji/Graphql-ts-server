@@ -2,7 +2,7 @@ import { User } from "./entity/User";
 import {
     resolverMap
 } from "./types/graphql-utils";
-import * as bcryptjs from "bcryptjs";
+import * as bcryptjs from "bcryptjs"
 
 export const resolvers: resolverMap = {
     Query: {
