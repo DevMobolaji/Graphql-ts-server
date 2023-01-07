@@ -1,0 +1,11 @@
+[user]
+    name = Tech Prof
+    email = alan08037896270@outlook.com 
+
+    signingkey = 17E5AC86FD7F258A
+
+[commit]
+    gpgsign = true
+
+[tag]
+    gpgSign = true
