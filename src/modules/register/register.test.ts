@@ -1,8 +1,8 @@
 
 import { request, gql } from 'graphql-request'
-import { host } from "./constants";
-import { TestDevSource } from "../data-source";
-import { User } from '../entity/User';
+import { host } from "../../test/constants";
+import { TestDevSource } from "../../data-source";
+import { User } from '../../entity/User';
 
 const email = "bob@bob42.com";
 const password = "bobsdfghgh";
