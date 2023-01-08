@@ -1,13 +1,21 @@
 
-import { request } from 'graphql-request'
+import { request, gql } from 'graphql-request'
 import { host } from "./constants";
-import { AppDataSource } from "../data-source";
+import { TestDevSource } from "../data-source";
 import { User } from '../entity/User';
 
-const email = "bob@bob2.com";
+const email = "bob@bob42.com";
 const password = "bobsdfghgh";
 
-const mutation = `
+beforeAll(async () => {
+  await TestDevSource.initialize()
+});
+
+afterAll(async () => {
+  await TestDevSource.destroy()
+});
+
+const mutation = gql`
   mutation {
     register(email: "${email}", password: "${password}")
   }`;
@@ -15,8 +23,6 @@ const mutation = `
 test('Register User', async () => {
   const response = await request(host, mutation)
   expect(response).toEqual({ register: true })
-
-  await AppDataSource.initialize();
 
   const users = await User.find({ where: { email } }) 
   expect(users).toHaveLength(1);

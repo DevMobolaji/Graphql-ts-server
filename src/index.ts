@@ -7,7 +7,7 @@ import { resolvers } from "./resolver"
 import * as path from "path"
 import { loadSchemaSync } from '@graphql-tools/load'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
-import { AppDataSource } from "./data-source"
+import { AppDataSource, TestDevSource } from "./data-source"
 
 
 export const startServer = async () => {
@@ -18,6 +18,8 @@ export const startServer = async () => {
 })
 
   await AppDataSource.initialize()
+  await TestDevSource.initialize()
+  
   const server = createServer(yoga)
 
   server.listen(8000, () => {
