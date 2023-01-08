@@ -1,21 +1,31 @@
 import "reflect-metadata"
 
-import { createSchema, createYoga } from 'graphql-yoga'
+import { createYoga } from 'graphql-yoga'
 import { createServer } from 'node:http'
 //import { loadFile } from 'graphql-import-files';
-import { resolvers } from "./resolver"
 import * as path from "path"
 import { loadSchemaSync } from '@graphql-tools/load'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { AppDataSource, TestDevSource } from "./data-source"
-
+import * as fs from "fs"
+import { makeExecutableSchema, mergeSchemas } from '@graphql-tools/schema'
+import { GraphQLSchema } from "graphql"
 
 export const startServer = async () => {
-  const typeDefs = loadSchemaSync(path.join(__dirname, 'schema.graphql'), { loaders: [new GraphQLFileLoader()] })
+  const schemas: GraphQLSchema[] = []
+  const folders = fs.readdirSync(path.join(__dirname, "./modules"));
 
-  const yoga = createYoga({
-  schema: createSchema({ typeDefs, resolvers })
-})
+  folders.forEach(folder => {
+    const { resolvers } = require(`./modules/${folder}/resolvers`)
+    const typeDefs = loadSchemaSync(path.join(__dirname, `./modules/${folder}/schema.graphql`), { loaders: [new GraphQLFileLoader()] })
+    
+    schemas.push(makeExecutableSchema({
+      typeDefs,
+      resolvers
+    }))
+  })
+
+    const yoga = createYoga({ schema: mergeSchemas({ schemas }) })
 
   await AppDataSource.initialize()
   await TestDevSource.initialize()
