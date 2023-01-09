@@ -6,7 +6,7 @@
    "scripts": {
       "start": "nodemon --exec ts-node --files src/index.ts",
       "test-server": "ts-node --files src/index.ts",
-      "test": "jest --detectOpenHandles",
+      "test": "jest --detectOpenHandles --forceExit",
       "watch": "tsc -w",
       "typeorm": "typeorm-ts-node-commonjs",
       "gen-schema-types": "gql2ts src/schema.graphql -o src/types/schema.d.ts"
@@ -20,6 +20,7 @@
       "@types/node": "^18.11.18",
       "@types/uuid": "^9.0.0",
       "@types/uuidv4": "^5.0.0",
+      "@types/yup": "^0.32.0",
       "jest": "^29.3.1",
       "nodemon": "^2.0.20",
       "start-server-and-test": "^1.15.2",
@@ -40,7 +41,7 @@
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.13",
       "typeorm": "0.3.11",
-      "uuid": "^9.0.0",
-      "uuidv4": "^6.2.13"
+      "uuidv4": "^6.2.13",
+      "yup": "^0.32.11"
    }
 }

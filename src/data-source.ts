@@ -1,6 +1,5 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { User } from "./entity/User"
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -11,9 +10,9 @@ export const AppDataSource = new DataSource({
     database: "graphql-ts-server",
     synchronize: true,
     logging: false,
-    entities: [User],
-    subscribers: [],
-    migrations: [],
+    entities: ["src/entity/**/*.ts"],
+    migrations: ["src/migration/**/*.ts"],
+    subscribers: ["src/subscriber/**/*.ts"],
 });
 
 
@@ -27,7 +26,7 @@ export const TestDevSource = new DataSource({
     synchronize: true,
     logging: false,
     dropSchema: true,
-    entities: [User],
-    subscribers: [],
-    migrations: [],
+    entities: ["src/entity/**/*.ts"],
+    migrations: ["src/migration/**/*.ts"],
+    subscribers: ["src/subscriber/**/*.ts"],
 });
