@@ -6,6 +6,7 @@ import * as bcryptjs from "bcryptjs"
 import * as yup from "yup"
 import { formatYupError } from "../../utils/formatYupError";
 import { duplicateEmail, emailNotLongEnough, invalidEmail, passwordNotLongEnough } from "./errorMessages";
+//import { createConfirmEmailLinkUrl } from "../../utils/createConfirmEmailLink";
 
 const schema = yup.object().shape({
     email: yup.string()
@@ -41,6 +42,7 @@ export const resolvers: resolverMap = {
                 password: hashedPass
             })
             await user.save()
+            //const link = await createConfirmEmailLinkUrl("", user.id, redis)
             return null
         }
         }

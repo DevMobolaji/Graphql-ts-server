@@ -1,5 +1,7 @@
+import { Redis } from "ioredis";
+
 export interface resolverMap {
     [key: string]: {
-        [key: string]: (parent: any, args: any, content: {}, info: any) => any;
+        [key: string]: (parent: any, args: any, context: {redis: Redis, url: string}, info: any) => any;
     }
 }

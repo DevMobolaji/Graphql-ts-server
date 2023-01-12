@@ -1,15 +1,17 @@
 import "reflect-metadata"
 
 import { createYoga } from 'graphql-yoga'
-import { createServer } from 'node:http'
-//import { loadFile } from 'graphql-import-files';
+
 import * as path from "path"
 import { loadSchemaSync } from '@graphql-tools/load'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
-import { AppDataSource, TestDevSource } from "./data-source"
 import * as fs from "fs"
 import { makeExecutableSchema, mergeSchemas } from '@graphql-tools/schema'
 import { GraphQLSchema } from "graphql"
+//import Redis from "ioredis"
+import express = require("express")
+//import { User } from "./entity/User"
+import { createTypeormConn } from "./utils/createTypeormConn"
 
 export const startServer = async () => {
   const schemas: GraphQLSchema[] = []
@@ -24,16 +26,28 @@ export const startServer = async () => {
       resolvers
     }))
   })
+  //const redis = new Redis();
+  const app = express();
 
-    const yoga = createYoga({ schema: mergeSchemas({ schemas }) })
+  const server = createYoga({
+    schema: mergeSchemas({ schemas })
+    
+  })
 
-  await AppDataSource.initialize()
-  await TestDevSource.initialize()
+  await createTypeormConn()
   
-  const server = createServer(yoga)
+  app.use('/graphql', server)
+  
+  // app.get("/confirm/:id", async (req, res) => {
+  //   const { id } = req.params;
+  //   //const userId = await redis.get(id)
+    
+  //   await User.update({ id: userId as any }, { confirmed: true });
+  //   res.send("ok")
+  // })
 
-  server.listen(8000, () => {
-    console.info('Server is running on http://localhost:8000/graphql');
+  app.listen(4000, () => {
+    console.info('Server is running on http://localhost:4000/graphql');
   })
 }
 

@@ -1,5 +1,6 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
+import sanitizedConfig from "./config";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -21,10 +22,10 @@ export const TestDevSource = new DataSource({
     host: "localhost",
     port: 5432,
     username: "postgres",
-    password: "Makanaki_12345",
+    password: sanitizedConfig.dbPass,
     database: "graphql-ts-server-test",
     synchronize: true,
-    logging: false,
+    logging: true,
     dropSchema: true,
     entities: ["src/entity/**/*.ts"],
     migrations: ["src/migration/**/*.ts"],
