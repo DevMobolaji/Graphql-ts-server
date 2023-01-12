@@ -25,5 +25,5 @@
      "allowSyntheticDefaultImports": false,
    },
    "exclude": ["node_modules"],
-   "include": ["./src/**/*.tsx", "./src/**/*.ts", "ormconfig.ts", "src/config/config.env"]
+   "include": ["./src/**/*.tsx", "./src/**/*.ts", "ormconfig.ts", "src/config/config.env", "global.d.ts", "config.ts"]
   } 

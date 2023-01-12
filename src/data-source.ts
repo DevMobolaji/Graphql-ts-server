@@ -1,6 +1,6 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import sanitizedConfig from "./config";
+import sanitizedConfig from "../config";
 
 export const AppDataSource = new DataSource({
     type: "postgres",

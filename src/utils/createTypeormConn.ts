@@ -1,4 +1,4 @@
-import sanitizedConfig from "../config"
+import sanitizedConfig from "../../config"
 import { AppDataSource, TestDevSource } from "../data-source"
 
 export const createTypeormConn = async () => {
