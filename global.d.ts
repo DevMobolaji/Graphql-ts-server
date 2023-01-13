@@ -3,5 +3,6 @@ declare namespace NodeJS {
     NODE_ENV: string;
     PORT: string | undefined;
     dbPass: string
+    TEST_HOST: string
   }
 }

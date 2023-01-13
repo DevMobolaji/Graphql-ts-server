@@ -16,7 +16,7 @@
      "noImplicitAny": true,
      "strictNullChecks": true,
      "strictFunctionTypes": true,
-    "noImplicitThis": true,
+     "noImplicitThis": true,
      "noUnusedLocals": true,
      "noUnusedParameters": true,
      "noImplicitReturns": true,
@@ -25,5 +25,5 @@
      "allowSyntheticDefaultImports": false,
    },
    "exclude": ["node_modules"],
-   "include": ["./src/**/*.tsx", "./src/**/*.ts", "ormconfig.ts", "src/config/config.env", "global.d.ts", "config.ts"]
+   "include": ["./src/**/*.tsx", "./src/**/*.ts", "ormconfig.ts", "src/config/config.env", "global.d.ts", "src/config.ts", "src/testSetup/callSetup.js"]
   } 

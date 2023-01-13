@@ -9,4 +9,7 @@ module.exports = {
   "transform": {
     "^.+\\.(ts|tsx)$": "ts-jest"
   },
+  // "setupFiles": [
+  //   "./src/testSetup/setup.ts"
+  // ]
 }

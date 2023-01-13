@@ -23,6 +23,7 @@ const schema = yup.object().shape({
 export const resolvers: resolverMap = {
     Mutation: {
         register: async (_, args: GQL.IRegisterOnMutationArguments) => {
+
             try {
                 await schema.validate(args, { abortEarly: false })
             } catch (error) {
@@ -42,7 +43,7 @@ export const resolvers: resolverMap = {
                 password: hashedPass
             })
             await user.save()
-            //const link = await createConfirmEmailLinkUrl("", user.id, redis)
+            //await createConfirmEmailLinkUrl("http://localhost:4000/graphql", user.id, redis)
             return null
         }
         }
