@@ -1,12 +1,12 @@
-import { User } from "../../entity/User";
-import {
-    resolverMap
-} from "../../types/graphql-utils";
 import * as bcryptjs from "bcryptjs"
 import * as yup from "yup"
 import { formatYupError } from "../../utils/formatYupError";
-import { duplicateEmail, emailNotLongEnough, invalidEmail, passwordNotLongEnough } from "./errorMessages";
-//import { createConfirmEmailLinkUrl } from "../../utils/createConfirmEmailLink";
+import { duplicateEmail, emailNotLongEnough, invalidEmail, passwordNotLongEnough } from "../../modules/register/errorMessages";
+import { resolverMap } from "../../types/graphql-utils";
+import { createConfirmEmailLinkUrl } from "../../utils/createConfirmEmailLink";
+import { sendEmail } from "../../utils/sendEmail";
+import { User } from "../../entity/User";
+import { MutationConfirmEmailArgs, MutationRegisterArgs } from "../../generated-types/graphql";
 
 const schema = yup.object().shape({
     email: yup.string()
@@ -22,8 +22,7 @@ const schema = yup.object().shape({
 
 export const resolvers: resolverMap = {
     Mutation: {
-        register: async (_, args: GQL.IRegisterOnMutationArguments) => {
-
+        register: async (_, args: MutationRegisterArgs, { redis, url }) => {
             try {
                 await schema.validate(args, { abortEarly: false })
             } catch (error) {
@@ -31,11 +30,14 @@ export const resolvers: resolverMap = {
             }
             const { email, password } = args;
             const userAlredyExists = await User.findOne({ where: { email }, select: ["id"] })
+
             if (userAlredyExists) {
-                return [{
-                    path: "email",
-                    message: duplicateEmail
-                }]
+                return [
+                    {
+                        path: "email",
+                        message: duplicateEmail
+                    }
+                ]
             }
             const hashedPass = await bcryptjs.hash(password, 10)
             const user = User.create({
@@ -43,8 +45,29 @@ export const resolvers: resolverMap = {
                 password: hashedPass
             })
             await user.save()
-            //await createConfirmEmailLinkUrl("http://localhost:4000/graphql", user.id, redis)
+            
+            const link = await createConfirmEmailLinkUrl(url, user.id, redis)
+            await sendEmail(email, link)
+            // const url1 = link.toString().split("/")[4]; 
+            // console.log(url1)
             return null
-        }
-        }
-    };
+        },
+        confirmEmail: async (_, args: MutationConfirmEmailArgs, { redis }) => {
+            try {
+                const { id } = args;
+                const userId = await redis.get(id as any)
+
+                if (!userId) {
+                    //throw new Error("User not found")
+                    return false
+                }
+                await User.update({ id: userId }, { confirmed: true });
+                await redis.del(id as any)
+                console.log("it worked")
+                return true
+            } catch (error) {
+                return formatYupError(error)
+            }
+        },
+    }
+};

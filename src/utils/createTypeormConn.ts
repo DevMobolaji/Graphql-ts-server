@@ -9,6 +9,10 @@ export const createTypeormConn = async () => {
     }
 }
 
-export const destroyDb = async () => {
-    await TestDevSource.destroy()
+export const createTypeormDisConn = async () => {
+    if (sanitizedConfig.NODE_ENV === "Test", { name: "default" }) {
+        await TestDevSource.destroy()
+    } else {
+        await AppDataSource.destroy()
+    }
 }
