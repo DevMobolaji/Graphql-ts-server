@@ -1,0 +1,5 @@
+# import Error from "../../register/typedefs/shared.graphql"
+
+type Mutation {
+    login(email: String!, password: String!): [Error!]
+}

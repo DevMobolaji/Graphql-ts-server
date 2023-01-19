@@ -31,6 +31,7 @@ export const startServer = async () => {
     })
     const schema = mergeSchemas({ schemas })
     const app = express();
+    await createTypeormConn()
 
     const httpServer= http.createServer(app)
 
@@ -46,10 +47,8 @@ export const startServer = async () => {
         expressMiddleware(server, {
         context: async ({ req }) => ({ redis, req: req, url: req.protocol + "://" + req.get("host")})
     }))
-
-    await createTypeormConn()
     
-    const serv = app.listen({ port: sanitizedConfig.PORT }, () => {
+    const serv = httpServer.listen({ port: sanitizedConfig.PORT }, () => {
         console.log(`🚀 Server ready at http://localhost:4000`);
     })
     //const serv = await new Promise<void>((resolve) => httpServer.listen({ port: sanitizedConfig.PORT }, resolve))

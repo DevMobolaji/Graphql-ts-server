@@ -6,7 +6,7 @@
    "scripts": {
       "start": "nodemon --exec ts-node --files src/index.ts",
       "test-server": "ts-node --files src/index.ts",
-      "test": "jest --detectOpenHandles --forceExit",
+      "test": "jest --detectOpenHandles --watch",
       "watch": "tsc -w",
       "typeorm": "typeorm-ts-node-commonjs",
       "generate": "graphql-codegen"
