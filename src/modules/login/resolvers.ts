@@ -1,19 +1,7 @@
 import * as bcryptjs from "bcryptjs"
-import * as yup from "yup"
-import { formatYupError } from "../../utils/formatYupError";
 import { resolverMap } from "../../types/graphql-utils";
 import { User } from "../../entity/User";
-import { invalidEmail } from "../register/errorMessages";
 import { confirmEmailError, invalidLogin } from "./errorMessages";
-
-const schema = yup.object().shape({
-    email: yup.string()
-        .email(invalidEmail)
-        .required(),
-    password: yup.string()
-    .required()
-})
-
 const InvalidLogin = [
     {
         path: "email",
@@ -28,16 +16,11 @@ const ConfirmEmailError = [
     }
 ];
 
-export const resolver: resolverMap = { 
+export const resolvers: resolverMap = { 
     Mutation: {
         login: async (_, args) => {
-            try {
-                await schema.validate(args, { abortEarly: true})
-            } catch (error) {
-                formatYupError(error)
-            }
             const { email, password } = args;
-            const user = await User.findOne({ where: { email } })
+            const user = await User.findOne({ where: { email } })       
             if (!user) {
                 return InvalidLogin
             }
