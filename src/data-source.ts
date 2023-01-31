@@ -18,6 +18,10 @@ export const AppDataSource = new DataSource({
 
 
 export const TestDevSource = new DataSource({
+    // type: "mongodb",
+    // url: sanitizedConfig.MONGO_URI,
+    // useNewUrlParser: true,
+    // port: 27017,
     type: "postgres",
     host: "localhost",
     port: 5432,
@@ -26,7 +30,6 @@ export const TestDevSource = new DataSource({
     database: "graphql-ts-server-test",
     synchronize: true,
     logging: false,
-    dropSchema: true,
     entities: ["src/entity/**/*.ts"],
     migrations: ["src/migration/**/*.ts"],
     subscribers: ["src/subscriber/**/*.ts"],

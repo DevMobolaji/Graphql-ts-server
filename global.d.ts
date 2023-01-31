@@ -4,5 +4,6 @@ declare namespace NodeJS {
     PORT: string | undefined;
     dbPass: string
     TEST_HOST: string
+    MONGO_URI: string
   }
 }

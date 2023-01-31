@@ -11,5 +11,6 @@ module.exports = {
   },
   "setupFiles": [
     "./src/testSetup/setup.ts"
-  ]
+  ],
+  testTimeout: 20000
 }

@@ -1,12 +1,12 @@
-import * as bcryptjs from "bcryptjs"
 import * as yup from "yup"
 import { formatYupError } from "../../utils/formatYupError";
-import { duplicateEmail, emailNotLongEnough, invalidEmail, passwordNotLongEnough } from "../../modules/register/errorMessages";
+import { duplicateEmail, emailNotLongEnough, invalidEmail } from "../../modules/register/errorMessages";
 import { resolverMap } from "../../types/graphql-utils";
 import { createConfirmEmailLinkUrl } from "../../utils/createConfirmEmailLink";
 import { sendEmail } from "../../utils/sendEmail";
 import { User } from "../../entity/User";
 import { MutationConfirmEmailArgs, MutationRegisterArgs } from "../../generated-types/graphql";
+import { registerPasswordValidation } from "../../yupSchema";
 
 const schema = yup.object().shape({
     email: yup.string()
@@ -14,10 +14,7 @@ const schema = yup.object().shape({
         .required()
         .min(3, emailNotLongEnough)
         .max(255),
-    password: yup.string()
-        .required()
-        .min(3, passwordNotLongEnough)
-        .max(255)
+    password: registerPasswordValidation
 })
 
 export const resolvers: resolverMap = {
@@ -29,7 +26,7 @@ export const resolvers: resolverMap = {
                 return formatYupError(error)
             }
             const { email, password } = args;
-            const userAlredyExists = await User.findOne({ where: { email }, select: ["id"] })
+            const userAlredyExists = await User.findOne({ where: { email } })
 
             if (userAlredyExists) {
                 return [
@@ -39,13 +36,15 @@ export const resolvers: resolverMap = {
                     }
                 ]
             }
-            const hashedPass = await bcryptjs.hash(password, 10)
+            //const user = new User()
             const user = User.create({
                 email,
-                password: hashedPass
+                password,
             })
+
             await user.save()
-            
+            console.log(user)
+                        
             const link = await createConfirmEmailLinkUrl(url, user.id, redis)
             await sendEmail(email, link)
             // const url1 = link.toString().split("/")[4]; 
@@ -69,5 +68,5 @@ export const resolvers: resolverMap = {
                 return formatYupError(error)
             }
         },
-    }
+     }
 };
