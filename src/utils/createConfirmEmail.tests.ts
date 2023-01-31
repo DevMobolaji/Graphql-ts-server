@@ -22,8 +22,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
     await createTypeormDisConn()
-    // await redis.flushdb()
-    // await redis.quit();
+    await redis.flushdb()
+    await redis.quit();
 })
 
 const mutation = (id: string) => gql`

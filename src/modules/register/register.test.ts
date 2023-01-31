@@ -1,33 +1,34 @@
-import { request, gql } from 'graphql-request'
 import { duplicateEmail, emailNotLongEnough, invalidEmail, passwordNotLongEnough } from './errorMessages';
 import sanitizedConfig from '../../config';
-import { createTypeormConn, createTypeormDisConn } from '../../utils/createTypeormConn';
+import { createTypeormConn } from '../../utils/createTypeormConn';
 import { User } from '../../entity/User';
+import { testClient } from '../../utils/testClients';
+//import { redis } from '../../redis';
+
+//import { AddressInfo } from "net";
+//import { startServer } from '../../startServer';
 
 beforeAll(async () => {
-    await createTypeormConn()
+  await createTypeormConn ()
 });
                                                                                                                                                        
-afterAll(async () => {
-    await createTypeormDisConn();
-})
+// afterAll(async () => {
+//   await createTypeormDisConn();
+//   await redis.flushdb()
+//   await redis.quit();
+// })
 
 
-const email = "alan080378962440@gmail.com";
+const email = "ala083780@mail.com";
 const password = "dgfjkjkkl";
 
-const mutation = (e: string, p: string) => gql`
-  mutation {
-    register(email: "${e}", password: "${p}") {
-      path
-      message
-    }
-  }`;
 
 describe('Register User', () => {
   it('"make sure to register a user"', async () => {
-    const response = await request(sanitizedConfig.TEST_HOST as string, mutation(email, password))
-    expect(response).toEqual({ register: null })
+    const client = new testClient(sanitizedConfig.TEST_HOST)
+    
+    const response = await client.register(email, password)
+    expect(response.data).toEqual({ register: null })
 
     const users = await User.find({ where: { email } })
     expect(users).toHaveLength(1);
@@ -37,18 +38,22 @@ describe('Register User', () => {
   })
 
   test("check for duplicate emails", async () => {
-    const response2: any  = await request(sanitizedConfig.TEST_HOST as string, mutation(email, password))
-    expect(response2.register).toHaveLength(1)
-    expect(response2.register[0]).toEqual({
+    const client = new testClient(sanitizedConfig.TEST_HOST)
+
+    const response2 = await client.register(email, password)
+    expect(response2.data.register).toHaveLength(1)
+    expect(response2.data.register[0]).toEqual({
       path: "email",
       message: duplicateEmail
     })
   })
 
   test("catch bad email", async () => {
-    const response3 = await request(sanitizedConfig.TEST_HOST as string, mutation("b", password))
-    expect(response3.register).toHaveLength(2)
-    expect(response3).toEqual({
+    const client = new testClient(sanitizedConfig.TEST_HOST)
+
+    const response3 = await client.register("hakahasdio", password)
+    expect(response3.data.register).toHaveLength(2)
+    expect(response3.data).toEqual({
       register: [
         {
           path: "email",
@@ -64,9 +69,11 @@ describe('Register User', () => {
   })
 
   test("catch bad password", async () => {
-    const response4 = await request(sanitizedConfig.TEST_HOST as string, mutation(email, "ad"))
-    expect(response4.register).toHaveLength(1)
-    expect(response4).toEqual({
+    const client = new testClient(sanitizedConfig.TEST_HOST)
+
+    const response4 = await client.register(email, "ad")
+    expect(response4.data.register).toHaveLength(1)
+    expect(response4.data).toEqual({
       register: [
         {
           path: "password",
@@ -77,9 +84,11 @@ describe('Register User', () => {
   })
 
   test("catch bad email and bad password", async () => {
-    const response5 = await request(sanitizedConfig.TEST_HOST as string, mutation("bj", "ad"))
-    expect(response5.register).toHaveLength(3)
-    expect(response5).toEqual({
+    const client = new testClient(sanitizedConfig.TEST_HOST)
+    
+    const response5 = await client.register("ad", "bj")
+    expect(response5.data.register).toHaveLength(3)
+    expect(response5.data).toEqual({
       register: [
       {
           path: "email",
