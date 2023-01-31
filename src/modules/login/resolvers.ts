@@ -3,6 +3,7 @@ import { resolverMap } from "../../types/graphql-utils";
 import { User } from "../../entity/User";
 import { confirmEmailError, forgotPasswordLockedError, invalidLogin } from "./errorMessages";
 import { userSessionIdPrefix } from "../../constants";
+import { MutationLoginArgs } from "../../generated-types/graphql";
 
 const InvalidLogin = [
     {
@@ -13,34 +14,41 @@ const InvalidLogin = [
 
 const ConfirmEmailError = [
     {
-        path: "emali",
+        path: "email",
         message: confirmEmailError
     }
 ];
 
-export const resolvers: resolverMap = { 
+const ForgotPasswordLockError = [
+    {
+        path: "password",
+        message: forgotPasswordLockedError
+    }
+];
+
+export const resolvers: resolverMap = {
     Mutation: {
-        login: async (_, args, { session, redis, req }) => {
+        login: async (_, args: MutationLoginArgs, { session, redis, req }) => {
             const { email, password } = args;
-            const user = await User.findOne({ where: { email }})
-            
+            const user = await User.findOne({ where: { email } })
+
 
             if (!user) {
                 return InvalidLogin
             }
 
-            
+
             if (!user.confirmed) {
                 return ConfirmEmailError
             }
 
-            
-            if (!user.forgotPasswordLocked) {
-                return forgotPasswordLockedError
+
+            if (user.forgotPasswordLocked) {
+                return ForgotPasswordLockError
             }
 
-            const validPass = await bcryptjs.compare(password, user.password)
-            
+            const validPass = await bcryptjs.compare(password, (user.password as any))
+
             if (!validPass) {
                 return InvalidLogin
             }
@@ -50,8 +58,8 @@ export const resolvers: resolverMap = {
             if (req.sessionID) {
                 await redis.lpush(`${userSessionIdPrefix}${user.id}`, req.sessionID)
             }
-            
-            return null;
+
+            return user;
         }
     }
 } 

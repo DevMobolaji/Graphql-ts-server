@@ -18,8 +18,8 @@ import session from "express-session"
 let RedisStore = require("connect-redis")(session)
 import cors from "cors"
 import { redisSessionPrefix } from "./constants"
-import rateLimit from 'express-rate-limit'
-import rateLimitRedisStore from "rate-limit-redis";
+// import rateLimit from 'express-rate-limit'
+// import rateLimitRedisStore from "rate-limit-redis";
 
 
 export const startServer = async () => {
@@ -75,25 +75,24 @@ export const startServer = async () => {
         } as any)
     );
 
-    app.use(
-        rateLimit({
-            store: new rateLimitRedisStore({
-                client: redis,
-            }),
-            windowMs: 15 * 60 * 1000, // 15 minutes
-            max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-            standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-            legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-        })
-    )
+    // const limiter = rateLimit({
+    //     windowMs: 15 * 60 * 1000, // 15 minutes
+    //     max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    //     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    //     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+
+    //     store: new rateLimitRedisStore({})
+    // })
+
+    // app.use(limiter)
     
 
     app.use("",
         cors<cors.CorsRequest>({
-            //origin: ['https://studio.apollographql.com', "http://localhost:4000"],
             origin: sanitizedConfig.NODE_ENV === "Test" ? "*" : "http://localhost:4000",
             credentials: true
-        }),          json(),
+        }),
+        json(),
         expressMiddleware(server, {
         context: async ({ req }) => ({ redis, req: req, session: req.session, url: req.protocol + "://" + req.get("host")})
         })
