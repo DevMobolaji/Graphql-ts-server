@@ -1,0 +1,6 @@
+# import Error from "./shared.graphql"
+
+type Mutation {
+    register(email: String!, password: String!): [Error!]
+    confirmEmail(id: String): Boolean
+} 

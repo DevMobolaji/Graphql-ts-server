@@ -4,6 +4,9 @@
 /node_modules
 /.pnp
 .pnp.js
+.gitconfig.user
+/config.env
+/dump.rdb
 
 # testing
 /coverage
