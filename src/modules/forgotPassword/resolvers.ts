@@ -8,6 +8,7 @@ import { createForgotPasswordLink } from "./createForgotPasswordLink";
 import { expiredKeyError, userNotFoundError } from "./errorMessages";
 import * as yup from "yup"
 import * as bcryptjs from "bcryptjs"
+import { MutationForgotPasswordChangeArgs, MutationSendForgotPasswordEmailArgs } from "../../generated-types/graphql";
 
 
 
@@ -20,9 +21,10 @@ const schema = yup.object().shape({
 
 export const resolvers: resolverMap = {
     Mutation: {
-        sendForgotPasswordEmail: async (_, { email }, { redis }) => {
+        sendForgotPasswordEmail: async (_, args: MutationSendForgotPasswordEmailArgs, { redis }) => {
+            const { email } = args;
             const user = await User.findOne({ where: { email } })
-            
+
             if (!user) {
                 return [
                     {
@@ -35,12 +37,13 @@ export const resolvers: resolverMap = {
             await forgotPasswordLockAccount(user.id, redis)
             //@todo add frontend url
 
-            await createForgotPasswordLink("", user.id, redis)
+            await createForgotPasswordLink("http://localhost:4000", user.id, redis)
             //@todo send email with url
 
-            return true
+            return null
         },
-        forgotPasswordChange: async (_, { newPassword, key }, { redis }) => {
+        forgotPasswordChange: async (_, args: MutationForgotPasswordChangeArgs, { redis }) => {
+            const { newPassword, key } = args;
             const redisKey = `${forgotPasswordPrefix}${key}}`
 
             const userId = await redis.get(redisKey)
@@ -61,14 +64,14 @@ export const resolvers: resolverMap = {
 
             const hashedPass = await bcryptjs.hash(newPassword, 10)
 
-            const updatePromise= await User.update({ id: userId }, {
+            const updatePromise = await User.update({ id: userId }, {
                 forgotPasswordLocked: false,
                 password: hashedPass
             })
 
             const deleteKeyPromise = await redis.del(redisKey)
             await Promise.all([deleteKeyPromise, updatePromise]);
-            
+
             return null
         }
     }

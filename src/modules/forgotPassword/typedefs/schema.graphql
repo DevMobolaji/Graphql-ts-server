@@ -1,6 +1,6 @@
 # import Error from "../../register/typedefs/shared.graphql"
 
 type Mutation {
-    sendForgotPasswordEmail(email: String!): Boolean
+    sendForgotPasswordEmail(email: String!): [Error!]
     forgotPasswordChange(newPassword: String!, key: String!): [Error!]
 }

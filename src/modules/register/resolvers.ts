@@ -43,8 +43,7 @@ export const resolvers: resolverMap = {
             })
 
             await user.save()
-            console.log(user)
-                        
+
             const link = await createConfirmEmailLinkUrl(url, user.id, redis)
             await sendEmail(email, link)
             // const url1 = link.toString().split("/")[4]; 
@@ -68,5 +67,5 @@ export const resolvers: resolverMap = {
                 return formatYupError(error)
             }
         },
-     }
+    }
 };
