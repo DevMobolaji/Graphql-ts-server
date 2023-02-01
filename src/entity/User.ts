@@ -16,7 +16,7 @@ export class User extends BaseEntity {
     confirmed: boolean
 
     @Column("text", { nullable: true })
-    twitterId: string | null;
+    googleId: string | null;
 
     @BeforeInsert()
     async hashPasswordBeforeInsert() {

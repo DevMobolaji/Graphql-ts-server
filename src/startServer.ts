@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import express, { NextFunction, Request, Response } from 'express'
+import express, { Request, Response } from 'express'
 import { createTypeormConn } from "./utils/createTypeormConn"
 import * as path from "path"
 import { loadSchemaSync } from '@graphql-tools/load'
@@ -19,12 +19,12 @@ let RedisStore = require("connect-redis")(session)
 import cors from "cors"
 import { redisSessionPrefix } from "./constants"
 import helmet from "helmet"
+import passport from "passport"
+import { Strategy } from "passport-google-oauth20"
+import { User } from "./entity/User"
+import { TestDevSource } from "./data-source"
 // import rateLimit from 'express-rate-limit'
 // import rateLimitRedisStore from "rate-limit-redis";
-
-//CLIENT ID 273549184185-pd80jdb5gi4nud6smdm9oiuog80e1kab.apps.googleusercontent.com
-//SECRET CLIENT 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
-
 
 export const startServer = async () => {
     const schemas: GraphQLSchema[] = []
@@ -66,24 +66,60 @@ export const startServer = async () => {
             [
                 ApolloServerPluginDrainHttpServer({ httpServer })
             ]
-    })
+    });
 
     await server.start()
 
-    app.get("/rest", (_req, res) => {
-        res.json({
-            data: "API is working...",
-        });
-    });
+    app.use(helmet())
+    app.use(passport.initialize())
 
-    app.get("/auth/google", (req: Request, res: Response) => {
 
-    })
+    const AUTH_OPTIONS = {
+        callbackURL: 'https://localhost:4000/auth/google/callback',
+        clientID: config.CLIENT_ID,
+        clientSecret: config.SECRET_CLIENT
+    }
 
-    app.get("/auth/google/callaback", (req: Request, res: Response, next: NextFunction) => {
+    const verifyCallback = async (_accessToken: any, _refreshToken: any, profile: any, done: any) => {
+        const { id, emails } = profile;
 
-    })
+        const query = TestDevSource
+            .getRepository(User)
+            .createQueryBuilder("user")
+            .where("user.googleId = :id", { id })
 
+        let email: string | null = null;
+        let verify: boolean | null = null;
+
+        if (emails) {
+            email = emails[0].value;
+            verify = emails[0].verified
+            query.orWhere("user.email = :email", { email })
+            query.orWhere("user.confirmed = :verify", { verify })
+        }
+
+        let user = await query.getOne()
+        const newUser = {
+            googleId: id,
+            email,
+            confirmed: verify
+        }
+
+        if (!user) {
+            user = await User.create((newUser as any)).save()
+            console.log(user)
+        } else if (!user.googleId) {
+            user.googleId = id;
+            await user.save()
+        } else {
+            //login too out frontend
+        }
+
+        return done(null, { id: (user as any).id });
+    }
+
+
+    passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
 
     app.use(
         session({
@@ -104,6 +140,31 @@ export const startServer = async () => {
         } as any)
     );
 
+    app.get("/rest", (_req, res) => {
+        res.json({
+            data: "API is working...",
+        });
+    });
+
+    app.get("/sign", (_req, res) => {
+        res.sendFile(path.join(__dirname, './index.html'));
+    })
+
+
+    app.get("/auth/google", passport.authenticate("google", {
+        scope: ["email", "profile"]
+    }))
+
+    app.get("/auth/google/callback", passport.authenticate("google", {
+        session: false
+    }), (req: Request, res: Response) => {
+        (req.session as any).userId = (req.user as any).id;
+        // @todo redirect to frontend
+        res.redirect("https://localhost:4000/rest");
+        console.log("Google called us back")
+    })
+
+
     // const limiter = rateLimit({
     //     windowMs: 15 * 60 * 1000, // 15 minutes
     //     max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
@@ -118,7 +179,7 @@ export const startServer = async () => {
 
     app.use("",
         cors<cors.CorsRequest>({
-            origin: sanitizedConfig.NODE_ENV === "Test" ? "*" : "http://localhost:4000",
+            origin: sanitizedConfig.NODE_ENV === "test" ? "*" : "https://localhost:4000",
             credentials: true
         }),
         json(),
@@ -126,11 +187,9 @@ export const startServer = async () => {
             context: async ({ req }) => ({ redis, req: req, session: req.session, url: req.protocol + "://" + req.get("host") })
         })
     )
-    app.use(helmet())
-
 
     await new Promise<void>((resolve) => httpServer.listen({ port: sanitizedConfig.PORT }, resolve))
-    console.log(`🚀 Server ready at http://localhost:4000/`);
+    console.log(`🚀 Server ready at https://localhost:4000/`);
 }
 
 
