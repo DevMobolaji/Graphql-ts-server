@@ -14,6 +14,8 @@ interface ENV {
   dbPass: string | undefined;
   TEST_HOST: string | undefined;
   MONGO_URI: string | undefined;
+  CLIENT_ID: string | undefined;
+  SECRET_CLIENT: string | undefined;
 }
 
 interface Config {
@@ -22,6 +24,8 @@ interface Config {
   dbPass: string;
   TEST_HOST: string;
   MONGO_URI: string;
+  CLIENT_ID: string;
+  SECRET_CLIENT: string;
 }
 
 // Loading process.env as ENV interface
@@ -32,7 +36,9 @@ const getConfig = (): ENV => {
     PORT: process.env.PORT ? Number(process.env.PORT) : undefined,
     dbPass: process.env.dbPass,
     TEST_HOST: process.env.TEST_HOST || undefined,
-    MONGO_URI: process.env.MONGO_URI
+    MONGO_URI: process.env.MONGO_URI,
+    CLIENT_ID: process.env.CLIENT_ID,
+    SECRET_CLIENT: process.env.SECRET_CLIENT
   };
 };
 

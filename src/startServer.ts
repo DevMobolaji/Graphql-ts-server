@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import { createTypeormConn } from "./utils/createTypeormConn"
 import * as path from "path"
 import { loadSchemaSync } from '@graphql-tools/load'
@@ -8,7 +8,7 @@ import * as fs from "fs"
 import { makeExecutableSchema, mergeSchemas } from '@graphql-tools/schema'
 import { GraphQLSchema } from "graphql"
 import { ApolloServer } from '@apollo/server'
-import http from "http"
+import https from "https"
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer"
 import { expressMiddleware } from "@apollo/server/express4"
 import { json } from 'body-parser';
@@ -18,8 +18,12 @@ import session from "express-session"
 let RedisStore = require("connect-redis")(session)
 import cors from "cors"
 import { redisSessionPrefix } from "./constants"
+import helmet from "helmet"
 // import rateLimit from 'express-rate-limit'
 // import rateLimitRedisStore from "rate-limit-redis";
+
+//CLIENT ID 273549184185-pd80jdb5gi4nud6smdm9oiuog80e1kab.apps.googleusercontent.com
+//SECRET CLIENT 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
 
 
 export const startServer = async () => {
@@ -29,7 +33,7 @@ export const startServer = async () => {
     folders.forEach(folder => {
         const { resolvers } = require(`./modules/${folder}/resolvers`)
         const typeDefs = loadSchemaSync(path.join(__dirname, `./modules/${folder}/typedefs/*.graphql`), { loaders: [new GraphQLFileLoader()] })
-    
+
         schemas.push(makeExecutableSchema({
             typeDefs,
             resolvers
@@ -40,11 +44,21 @@ export const startServer = async () => {
         redis.flushdb()
         redis.flushall()
     }
+
     const schema = mergeSchemas({ schemas })
     const app = express();
     await createTypeormConn()
 
-    const httpServer= http.createServer(app)
+
+    const httpServer = https.createServer({
+        key: fs.readFileSync('./src/ssl/server.pem'),
+        cert: fs.readFileSync('./src/ssl/cert.pem'),
+    }, app);
+
+    const config = {
+        CLIENT_ID: sanitizedConfig.CLIENT_ID,
+        SECRET_CLIENT: sanitizedConfig.SECRET_CLIENT
+    }
 
     const server = new ApolloServer({
         schema,
@@ -55,6 +69,21 @@ export const startServer = async () => {
     })
 
     await server.start()
+
+    app.get("/rest", (_req, res) => {
+        res.json({
+            data: "API is working...",
+        });
+    });
+
+    app.get("/auth/google", (req: Request, res: Response) => {
+
+    })
+
+    app.get("/auth/google/callaback", (req: Request, res: Response, next: NextFunction) => {
+
+    })
+
 
     app.use(
         session({
@@ -85,7 +114,7 @@ export const startServer = async () => {
     // })
 
     // app.use(limiter)
-    
+
 
     app.use("",
         cors<cors.CorsRequest>({
@@ -94,17 +123,14 @@ export const startServer = async () => {
         }),
         json(),
         expressMiddleware(server, {
-        context: async ({ req }) => ({ redis, req: req, session: req.session, url: req.protocol + "://" + req.get("host")})
+            context: async ({ req }) => ({ redis, req: req, session: req.session, url: req.protocol + "://" + req.get("host") })
         })
     )
+    app.use(helmet())
 
-    const serv = httpServer.listen({ port: sanitizedConfig.PORT }, () => {
-        console.log(`🚀 Server ready at http://localhost:4000`);
-    })
-    //const serv = await new Promise<void>((resolve) => httpServer.listen({ port: sanitizedConfig.PORT }, resolve))
-    // console.log(`🚀 Server ready at http://localhost:4000/`);
 
-    return serv
+    await new Promise<void>((resolve) => httpServer.listen({ port: sanitizedConfig.PORT }, resolve))
+    console.log(`🚀 Server ready at http://localhost:4000/`);
 }
 
 
