@@ -2,9 +2,12 @@ import { createTypeormConn } from "../../utils/createTypeormConn";
 import { User } from "../../entity/User";
 import sanitizedConfig from "../../config";
 import { testClient } from "../../utils/testClients";
+import { faker } from "@faker-js/faker";
 
-const email = "malikbn@gmail.com"
-const password = "bob123456"
+
+faker.seed(Date.now() + 3)
+const email = faker.internet.email();
+const password = faker.internet.password();
 let userId: string;
 
 beforeAll(async () => {

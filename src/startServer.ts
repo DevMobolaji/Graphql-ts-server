@@ -8,7 +8,8 @@ import * as fs from "fs"
 import { makeExecutableSchema, mergeSchemas } from '@graphql-tools/schema'
 import { GraphQLSchema } from "graphql"
 import { ApolloServer } from '@apollo/server'
-import https from "https"
+//import https from "https"
+import http from "http"
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer"
 import { expressMiddleware } from "@apollo/server/express4"
 import { json } from 'body-parser';
@@ -21,8 +22,8 @@ import { redisSessionPrefix } from "./constants"
 import helmet from "helmet"
 import passport from "passport"
 import { Strategy } from "passport-google-oauth20"
-import { User } from "./entity/User"
-import { TestDevSource } from "./data-source"
+import { verifyCallback } from "./Restful routes/verifyCallback"
+
 // import rateLimit from 'express-rate-limit'
 // import rateLimitRedisStore from "rate-limit-redis";
 
@@ -45,21 +46,26 @@ export const startServer = async () => {
         redis.flushall()
     }
 
+
     const schema = mergeSchemas({ schemas })
     const app = express();
     await createTypeormConn()
 
 
-    const httpServer = https.createServer({
-        key: fs.readFileSync('./src/ssl/server.pem'),
-        cert: fs.readFileSync('./src/ssl/cert.pem'),
-    }, app);
+    // const httpServer = https.createServer({
+    //     key: fs.readFileSync('./src/ssl/server.pem'),
+    //     cert: fs.readFileSync('./src/ssl/cert.pem'),
+    // }, app);
+
+
+    const httpServer = http.createServer(app);
 
     const config = {
         CLIENT_ID: sanitizedConfig.CLIENT_ID,
         SECRET_CLIENT: sanitizedConfig.SECRET_CLIENT
     }
 
+    //SERVER STARTRUP
     const server = new ApolloServer({
         schema,
         plugins:
@@ -70,9 +76,8 @@ export const startServer = async () => {
 
     await server.start()
 
-    app.use(helmet())
+    //PASSPORT CONFIG FOR GOOGLE AUTH
     app.use(passport.initialize())
-
 
     const AUTH_OPTIONS = {
         callbackURL: 'https://localhost:4000/auth/google/callback',
@@ -80,47 +85,10 @@ export const startServer = async () => {
         clientSecret: config.SECRET_CLIENT
     }
 
-    const verifyCallback = async (_accessToken: any, _refreshToken: any, profile: any, done: any) => {
-        const { id, emails } = profile;
-
-        const query = TestDevSource
-            .getRepository(User)
-            .createQueryBuilder("user")
-            .where("user.googleId = :id", { id })
-
-        let email: string | null = null;
-        let verify: boolean | null = null;
-
-        if (emails) {
-            email = emails[0].value;
-            verify = emails[0].verified
-            query.orWhere("user.email = :email", { email })
-            query.orWhere("user.confirmed = :verify", { verify })
-        }
-
-        let user = await query.getOne()
-        const newUser = {
-            googleId: id,
-            email,
-            confirmed: verify
-        }
-
-        if (!user) {
-            user = await User.create((newUser as any)).save()
-            console.log(user)
-        } else if (!user.googleId) {
-            user.googleId = id;
-            await user.save()
-        } else {
-            //login too out frontend
-        }
-
-        return done(null, { id: (user as any).id });
-    }
-
-
     passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
 
+    //EXPRESS MIDDLEWARE
+    app.use(helmet());
     app.use(
         session({
             store: new RedisStore({
@@ -140,30 +108,31 @@ export const startServer = async () => {
         } as any)
     );
 
-    app.get("/rest", (_req, res) => {
-        res.json({
-            data: "API is working...",
-        });
-    });
+    app.use("",
+        cors<cors.CorsRequest>({
+            origin: sanitizedConfig.NODE_ENV === "test" ? "*" : "http://localhost:5000",
+            credentials: true
+        }),
+        json(),
+        expressMiddleware(server, {
+            context: async ({ req }) => ({ redis, req: req, session: req.session, url: req.protocol + "://" + req.get("host") })
+        })
+    );
 
-    app.get("/sign", (_req, res) => {
-        res.sendFile(path.join(__dirname, './index.html'));
-    })
-
-
-    app.get("/auth/google", passport.authenticate("google", {
-        scope: ["email", "profile"]
-    }))
+    app.get("/auth/google",
+        passport.authenticate("google", {
+            scope: ["email", "profile"]
+        })
+    )
 
     app.get("/auth/google/callback", passport.authenticate("google", {
         session: false
     }), (req: Request, res: Response) => {
         (req.session as any).userId = (req.user as any).id;
         // @todo redirect to frontend
-        res.redirect("https://localhost:4000/rest");
+        res.redirect("http://localhost:4000");
         console.log("Google called us back")
     })
-
 
     // const limiter = rateLimit({
     //     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -176,20 +145,8 @@ export const startServer = async () => {
 
     // app.use(limiter)
 
-
-    app.use("",
-        cors<cors.CorsRequest>({
-            origin: sanitizedConfig.NODE_ENV === "test" ? "*" : "https://localhost:4000",
-            credentials: true
-        }),
-        json(),
-        expressMiddleware(server, {
-            context: async ({ req }) => ({ redis, req: req, session: req.session, url: req.protocol + "://" + req.get("host") })
-        })
-    )
-
     await new Promise<void>((resolve) => httpServer.listen({ port: sanitizedConfig.PORT }, resolve))
-    console.log(`🚀 Server ready at https://localhost:4000/`);
+    console.log(`🚀 Server ready at http://localhost:5000/`);
 }
 
 

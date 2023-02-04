@@ -59,7 +59,7 @@ export const resolvers: resolverMap = {
                 await redis.lpush(`${userSessionIdPrefix}${user.id}`, req.sessionID)
             }
 
-            return user;
+            return null;
         }
     }
 } 

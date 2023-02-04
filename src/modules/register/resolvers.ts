@@ -54,6 +54,7 @@ export const resolvers: resolverMap = {
             try {
                 const { id } = args;
                 const userId = await redis.get(id as any)
+                console.log(userId)
 
                 if (!userId) {
                     //throw new Error("User not found")

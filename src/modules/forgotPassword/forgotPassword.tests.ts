@@ -9,9 +9,13 @@ import { forgotPasswordLockedError } from "../login/errorMessages";
 import { passwordNotLongEnough } from "../register/errorMessages";
 import { expiredKeyError } from "./errorMessages";
 
-const email = "malikbn@gmail.com"
-const password = "bob123456"
-const newPassword = "dfhduidhksdhfdis";
+import { faker } from "@faker-js/faker";
+
+
+faker.seed(Date.now() + 5)
+const email = faker.internet.email();
+const password = faker.internet.password();
+const newPassword = faker.internet.password()
 
 let userId: string;
 
@@ -45,7 +49,7 @@ describe("forgot password", () => {
                     message: forgotPasswordLockedError
                 }]
             }
-        }) 
+        })
 
         //try changing to password thats too short
         expect(await client.forgotPasswordChange("a", key)).toEqual({

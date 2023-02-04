@@ -1,6 +1,14 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, BeforeInsert } from "typeorm";
 import * as bcryptjs from "bcryptjs"
 
+
+export enum UserTypes {
+    ADMIN = 'ADMIN',
+    USER = 'USER',
+    MOD = 'MOD'
+}
+
+
 @Entity("users")
 export class User extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
@@ -14,6 +22,14 @@ export class User extends BaseEntity {
 
     @Column("boolean", { default: false })
     confirmed: boolean
+
+
+    @Column({
+        type: 'enum',
+        enum: UserTypes,
+        default: UserTypes.USER
+    })
+    userType: UserTypes
 
     @Column("text", { nullable: true })
     googleId: string | null;

@@ -7,6 +7,11 @@ export const resolvers: resolverMap = {
         logout: async (_, __, { session, redis }) => {
             const { userId } = session;
             if (userId) {
+                session.destroy(err => {
+                    if (err) {
+                        console.log(err)
+                    }
+                })
                 removeAllUserSessions(userId, redis)
                 return true
             }

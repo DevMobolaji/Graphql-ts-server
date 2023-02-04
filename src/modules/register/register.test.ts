@@ -1,32 +1,30 @@
 import { duplicateEmail, emailNotLongEnough, invalidEmail, passwordNotLongEnough } from './errorMessages';
 import sanitizedConfig from '../../config';
-import { createTypeormConn } from '../../utils/createTypeormConn';
+//import { createTypeormConn } from '../../utils/createTypeormConn';
 import { User } from '../../entity/User';
 import { testClient } from '../../utils/testClients';
-//import { redis } from '../../redis';
+import { faker } from '@faker-js/faker';
+import { startServer } from '../../startServer';
 
-//import { AddressInfo } from "net";
-//import { startServer } from '../../startServer';
+
+faker.seed(Date.now() + 4)
+const email = faker.internet.email();
+const password = faker.internet.password();
 
 beforeAll(async () => {
-  await createTypeormConn ()
+  await startServer()
 });
-                                                                                                                                                       
+
 // afterAll(async () => {
 //   await createTypeormDisConn();
 //   await redis.flushdb()
 //   await redis.quit();
 // })
 
-
-const email = "ala083780@mail.com";
-const password = "dgfjkjkkl";
-
-
 describe('Register User', () => {
   it('"make sure to register a user"', async () => {
     const client = new testClient(sanitizedConfig.TEST_HOST)
-    
+
     const response = await client.register(email, password)
     expect(response.data).toEqual({ register: null })
 
@@ -64,7 +62,7 @@ describe('Register User', () => {
           message: emailNotLongEnough
         },
       ]
-  });
+    });
 
   })
 
@@ -85,12 +83,12 @@ describe('Register User', () => {
 
   test("catch bad email and bad password", async () => {
     const client = new testClient(sanitizedConfig.TEST_HOST)
-    
+
     const response5 = await client.register("ad", "bj")
     expect(response5.data.register).toHaveLength(3)
     expect(response5.data).toEqual({
       register: [
-      {
+        {
           path: "email",
           message: invalidEmail
         },

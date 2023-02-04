@@ -9,6 +9,7 @@ import { expiredKeyError, userNotFoundError } from "./errorMessages";
 import * as yup from "yup"
 import * as bcryptjs from "bcryptjs"
 import { MutationForgotPasswordChangeArgs, MutationSendForgotPasswordEmailArgs } from "../../generated-types/graphql";
+import { sendEmail } from "../../utils/sendEmail";
 
 
 
@@ -21,7 +22,7 @@ const schema = yup.object().shape({
 
 export const resolvers: resolverMap = {
     Mutation: {
-        sendForgotPasswordEmail: async (_, args: MutationSendForgotPasswordEmailArgs, { redis }) => {
+        sendForgotPasswordEmail: async (_, args: MutationSendForgotPasswordEmailArgs, { redis, url }) => {
             const { email } = args;
             const user = await User.findOne({ where: { email } })
 
@@ -37,14 +38,15 @@ export const resolvers: resolverMap = {
             await forgotPasswordLockAccount(user.id, redis)
             //@todo add frontend url
 
-            await createForgotPasswordLink("http://localhost:4000", user.id, redis)
+            const link = await createForgotPasswordLink(url, user.id, redis)
             //@todo send email with url
+            await sendEmail(email, link)
 
-            return null
+            return true
         },
         forgotPasswordChange: async (_, args: MutationForgotPasswordChangeArgs, { redis }) => {
             const { newPassword, key } = args;
-            const redisKey = `${forgotPasswordPrefix}${key}}`
+            const redisKey = `${forgotPasswordPrefix}${key}`
 
             const userId = await redis.get(redisKey)
             if (!userId) {
@@ -53,11 +55,11 @@ export const resolvers: resolverMap = {
                         path: "key",
                         message: expiredKeyError
                     }
-                ]
-            }
+                ];
+            };
 
             try {
-                await schema.validate(newPassword, { abortEarly: false })
+                await schema.validate({ newPassword }, { abortEarly: false })
             } catch (error) {
                 return formatYupError(error)
             }
