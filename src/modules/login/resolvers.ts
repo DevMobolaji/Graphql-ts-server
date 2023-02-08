@@ -3,7 +3,6 @@ import { resolverMap } from "../../types/graphql-utils";
 import { User } from "../../entity/User";
 import { confirmEmailError, forgotPasswordLockedError, invalidLogin } from "./errorMessages";
 import { userSessionIdPrefix } from "../../constants";
-import { MutationLoginArgs } from "../../generated-types/graphql";
 
 const InvalidLogin = [
     {
@@ -28,7 +27,7 @@ const ForgotPasswordLockError = [
 
 export const resolvers: resolverMap = {
     Mutation: {
-        login: async (_, args: MutationLoginArgs, { session, redis, req }) => {
+        login: async (_, args, { session, redis, req }) => {
             const { email, password } = args;
             const user = await User.findOne({ where: { email } })
 
@@ -59,7 +58,7 @@ export const resolvers: resolverMap = {
                 await redis.lpush(`${userSessionIdPrefix}${user.id}`, req.sessionID)
             }
 
-            return user;
+            return null;
         }
     }
 } 

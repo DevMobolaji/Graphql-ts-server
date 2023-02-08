@@ -2,5 +2,5 @@
 
 type Mutation {
     register(email: String!, password: String!): [Error!]
-    confirmEmail(id: String): Boolean
+    confirmEmail(id: String!): Boolean!
 } 

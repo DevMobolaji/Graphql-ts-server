@@ -3,28 +3,31 @@ import { confirmEmailError, invalidLogin } from './errorMessages';
 import { User } from '../../entity/User';
 import { createTypeormConn, createTypeormDisConn } from '../../utils/createTypeormConn';
 import { testClient } from '../../utils/testClients';
+import { faker } from "@faker-js/faker";
 
-const email = "alan080378962480@gmail.com";
-const password = "dgfjkjkkl";
+
+faker.seed(Date.now() + 1)
+const email = faker.internet.email();
+const password = faker.internet.password();
 
 beforeAll(async () => {
-    await createTypeormConn()
+  await createTypeormConn()
 });
-                                                                                                                                                       
+
 afterAll(async () => {
-    await createTypeormDisConn();
+  await createTypeormDisConn();
 })
 
 
 const loginExpectError = async (client: testClient, e: string, p: string, errMsg: string) => {
   const response = await client.login(e, p)
 
-        expect(response).toEqual({
-            login: [{
-                path: "email",
-                message: errMsg
-            }]
-        })
+  expect(response).toEqual({
+    login: [{
+      path: "email",
+      message: errMsg
+    }]
+  })
 }
 
 describe("login", () => {
@@ -32,21 +35,21 @@ describe("login", () => {
     const client = new testClient(sanitizedConfig.TEST_HOST)
     await loginExpectError(client, "bob@dbob.com", "bob12345", invalidLogin)
   })
-  
+
   test("Email not confirmed", async () => {
-    const client = new testClient(sanitizedConfig.TEST_HOST) 
+    const client = new testClient(sanitizedConfig.TEST_HOST)
 
     await client.register(email, password)
 
     await loginExpectError(client, email, password, confirmEmailError)
-      
+
     await User.update({ confirmed: true }, { email })
-    
+
     await loginExpectError(client, email, "sedfsdfjofd", invalidLogin)
 
-      
+
     const response = await client.login(email, password)
-      
+
     expect(response).toEqual({ login: null });
   })
 }) 

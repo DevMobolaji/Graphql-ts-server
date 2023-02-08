@@ -18,10 +18,6 @@ export const AppDataSource = new DataSource({
 
 
 export const TestDevSource = new DataSource({
-    // type: "mongodb",
-    // url: sanitizedConfig.MONGO_URI,
-    // useNewUrlParser: true,
-    // port: 27017,
     type: "postgres",
     host: "localhost",
     port: 5432,

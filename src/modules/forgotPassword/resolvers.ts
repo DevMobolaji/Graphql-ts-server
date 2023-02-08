@@ -1,14 +1,16 @@
+
 import { forgotPasswordPrefix } from "../../constants";
 import { User } from "../../entity/User";
 import { resolverMap } from "../../types/graphql-utils";
 import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount";
 import { formatYupError } from "../../utils/formatYupError";
+import { sendEmail } from "../../utils/sendEmail";
 import { registerPasswordValidation } from "../../yupSchema";
 import { createForgotPasswordLink } from "./createForgotPasswordLink";
-import { expiredKeyError, userNotFoundError } from "./errorMessages";
+import { userNotFoundError, expiredKeyError } from "./errorMessages";
 import * as yup from "yup"
 import * as bcryptjs from "bcryptjs"
-import { MutationForgotPasswordChangeArgs, MutationSendForgotPasswordEmailArgs } from "../../generated-types/graphql";
+
 
 
 
@@ -21,7 +23,7 @@ const schema = yup.object().shape({
 
 export const resolvers: resolverMap = {
     Mutation: {
-        sendForgotPasswordEmail: async (_, args: MutationSendForgotPasswordEmailArgs, { redis }) => {
+        sendForgotPasswordEmail: async (_, args, { redis, url }) => {
             const { email } = args;
             const user = await User.findOne({ where: { email } })
 
@@ -37,14 +39,15 @@ export const resolvers: resolverMap = {
             await forgotPasswordLockAccount(user.id, redis)
             //@todo add frontend url
 
-            await createForgotPasswordLink("http://localhost:4000", user.id, redis)
+            const link = await createForgotPasswordLink(url, user.id, redis)
             //@todo send email with url
+            await sendEmail(email, link)
 
-            return null
+            return true
         },
-        forgotPasswordChange: async (_, args: MutationForgotPasswordChangeArgs, { redis }) => {
+        forgotPasswordChange: async (_, args, { redis }) => {
             const { newPassword, key } = args;
-            const redisKey = `${forgotPasswordPrefix}${key}}`
+            const redisKey = `${forgotPasswordPrefix}${key}`
 
             const userId = await redis.get(redisKey)
             if (!userId) {
@@ -53,11 +56,11 @@ export const resolvers: resolverMap = {
                         path: "key",
                         message: expiredKeyError
                     }
-                ]
-            }
+                ];
+            };
 
             try {
-                await schema.validate(newPassword, { abortEarly: false })
+                await schema.validate({ newPassword }, { abortEarly: false })
             } catch (error) {
                 return formatYupError(error)
             }

@@ -1,11 +1,9 @@
-//yarn add request-promise to install the package and also add the type\
 import { gql } from "graphql-request";
-//import rp from "request-promise"
 import axios from "Axios"
- 
+
 export class testClient {
-    url: string; 
-    options: {json: boolean; withCredentials: boolean; };
+    url: string;
+    options: { json: boolean; withCredentials: boolean; };
 
     constructor(url: string) {
         this.url = url

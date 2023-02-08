@@ -7,6 +7,7 @@
 .gitconfig.user
 /config.env
 /dump.rdb
+./src/ssl
 
 # testing
 /coverage

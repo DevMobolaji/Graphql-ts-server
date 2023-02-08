@@ -1,12 +1,12 @@
 import * as yup from "yup"
-import { formatYupError } from "../../utils/formatYupError";
-import { duplicateEmail, emailNotLongEnough, invalidEmail } from "../../modules/register/errorMessages";
-import { resolverMap } from "../../types/graphql-utils";
-import { createConfirmEmailLinkUrl } from "../../utils/createConfirmEmailLink";
+import { invalidEmail, emailNotLongEnough, duplicateEmail } from "./errorMessages";
 import { sendEmail } from "../../utils/sendEmail";
 import { User } from "../../entity/User";
-import { MutationConfirmEmailArgs, MutationRegisterArgs } from "../../generated-types/graphql";
+import { resolverMap } from "../../types/graphql-utils";
+import { createConfirmEmailLinkUrl } from "../../utils/createConfirmEmailLink";
+import { formatYupError } from "../../utils/formatYupError";
 import { registerPasswordValidation } from "../../yupSchema";
+
 
 const schema = yup.object().shape({
     email: yup.string()
@@ -19,7 +19,7 @@ const schema = yup.object().shape({
 
 export const resolvers: resolverMap = {
     Mutation: {
-        register: async (_, args: MutationRegisterArgs, { redis, url }) => {
+        register: async (_, args, { redis, url }) => {
             try {
                 await schema.validate(args, { abortEarly: false })
             } catch (error) {
@@ -50,10 +50,11 @@ export const resolvers: resolverMap = {
             // console.log(url1)
             return null
         },
-        confirmEmail: async (_, args: MutationConfirmEmailArgs, { redis }) => {
+        confirmEmail: async (_, args, { redis }) => {
             try {
                 const { id } = args;
                 const userId = await redis.get(id as any)
+                console.log(userId)
 
                 if (!userId) {
                     //throw new Error("User not found")

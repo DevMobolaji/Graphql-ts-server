@@ -1,0 +1,42 @@
+# import Error from "./shared.graphql"
+
+
+input ProductsFilterInput {
+    onSale: Boolean
+}
+
+type Category {
+    id: ID!
+    name: String!
+}
+
+type Product {
+    id: ID!
+    name: String!
+    description: String!
+    price: Float!
+    image: String!
+    quantity: Int!
+    onSale: Boolean!
+    category: Category!
+}
+
+input AddProductInput {
+    name: String!
+    description: String!
+    price: Float!
+    image: String!
+    quantity: Int
+    onSale: Boolean!
+    categoryId: String!
+}
+
+type Query {
+    product(id: ID!): Product!
+    products: [Product!]!
+    productsByFilter(filter: ProductsFilterInput): [Product!]
+}
+
+type Mutation {
+    AddProduct(input: AddProductInput!): [Error!]
+}
