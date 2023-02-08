@@ -4,7 +4,7 @@ import sanitizedConfig from '../../config';
 import { User } from '../../entity/User';
 import { testClient } from '../../utils/testClients';
 import { faker } from '@faker-js/faker';
-import { startServer } from '../../startServer';
+import { startServer } from '../../startServers';
 
 
 faker.seed(Date.now() + 4)

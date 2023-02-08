@@ -14,6 +14,26 @@ export type Scalars = {
   Float: number;
 };
 
+export type AddCategoryInput = {
+  name: Scalars['String'];
+};
+
+export type AddProductInput = {
+  categoryId: Scalars['String'];
+  description: Scalars['String'];
+  image: Scalars['String'];
+  name: Scalars['String'];
+  onSale: Scalars['Boolean'];
+  price: Scalars['Float'];
+  quantity: Scalars['Int'];
+};
+
+export type Category = {
+  __typename?: 'Category';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+};
+
 export type Error = {
   __typename?: 'Error';
   message: Scalars['String'];
@@ -22,7 +42,9 @@ export type Error = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  confirmEmail?: Maybe<Scalars['Boolean']>;
+  AddCategory: Category;
+  AddProduct: Product;
+  confirmEmail: Scalars['Boolean'];
   forgotPasswordChange?: Maybe<Array<Error>>;
   login?: Maybe<Array<Error>>;
   logout?: Maybe<Scalars['Boolean']>;
@@ -31,8 +53,18 @@ export type Mutation = {
 };
 
 
+export type MutationAddCategoryArgs = {
+  input: AddCategoryInput;
+};
+
+
+export type MutationAddProductArgs = {
+  input: AddProductInput;
+};
+
+
 export type MutationConfirmEmailArgs = {
-  id?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
 };
 
 
@@ -58,15 +90,41 @@ export type MutationSendForgotPasswordEmailArgs = {
   email: Scalars['String'];
 };
 
+export type Product = {
+  __typename?: 'Product';
+  category: Category;
+  description: Scalars['String'];
+  id: Scalars['ID'];
+  image: Scalars['String'];
+  name: Scalars['String'];
+  onSale: Scalars['Boolean'];
+  price: Scalars['Float'];
+  quantity: Scalars['Int'];
+};
+
 export type Query = {
   __typename?: 'Query';
+  categories: Array<Category>;
+  category?: Maybe<Category>;
   hello?: Maybe<Scalars['String']>;
   me?: Maybe<User>;
+  product?: Maybe<Product>;
+  products: Array<Product>;
+};
+
+
+export type QueryCategoryArgs = {
+  id: Scalars['ID'];
 };
 
 
 export type QueryHelloArgs = {
   name?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryProductArgs = {
+  id: Scalars['ID'];
 };
 
 export type User = {
@@ -144,10 +202,16 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AddCategoryInput: AddCategoryInput;
+  AddProductInput: AddProductInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Category: ResolverTypeWrapper<Category>;
   Error: ResolverTypeWrapper<Error>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
+  Product: ResolverTypeWrapper<Product>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   User: ResolverTypeWrapper<User>;
@@ -155,13 +219,25 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AddCategoryInput: AddCategoryInput;
+  AddProductInput: AddProductInput;
   Boolean: Scalars['Boolean'];
+  Category: Category;
   Error: Error;
+  Float: Scalars['Float'];
   ID: Scalars['ID'];
+  Int: Scalars['Int'];
   Mutation: {};
+  Product: Product;
   Query: {};
   String: Scalars['String'];
   User: User;
+};
+
+export type CategoryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type ErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Error'] = ResolversParentTypes['Error']> = {
@@ -171,7 +247,9 @@ export type ErrorResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  confirmEmail?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, Partial<MutationConfirmEmailArgs>>;
+  AddCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationAddCategoryArgs, 'input'>>;
+  AddProduct?: Resolver<ResolversTypes['Product'], ParentType, ContextType, RequireFields<MutationAddProductArgs, 'input'>>;
+  confirmEmail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationConfirmEmailArgs, 'id'>>;
   forgotPasswordChange?: Resolver<Maybe<Array<ResolversTypes['Error']>>, ParentType, ContextType, RequireFields<MutationForgotPasswordChangeArgs, 'key' | 'newPassword'>>;
   login?: Resolver<Maybe<Array<ResolversTypes['Error']>>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   logout?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -179,9 +257,25 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   sendForgotPasswordEmail?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationSendForgotPasswordEmailArgs, 'email'>>;
 };
 
+export type ProductResolvers<ContextType = any, ParentType extends ResolversParentTypes['Product'] = ResolversParentTypes['Product']> = {
+  category?: Resolver<ResolversTypes['Category'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  image?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  onSale?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
+  category?: Resolver<Maybe<ResolversTypes['Category']>, ParentType, ContextType, RequireFields<QueryCategoryArgs, 'id'>>;
   hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, Partial<QueryHelloArgs>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  product?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType, RequireFields<QueryProductArgs, 'id'>>;
+  products?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
@@ -191,8 +285,10 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  Category?: CategoryResolvers<ContextType>;
   Error?: ErrorResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Product?: ProductResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };

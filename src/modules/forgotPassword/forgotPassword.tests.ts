@@ -1,12 +1,12 @@
-import { createTypeormConn } from "../../utils/createTypeormConn";
-import { User } from "../../entity/User";
 import sanitizedConfig from "../../config";
-import { testClient } from "../../utils/testClients";
+import { User } from "../../entity/User";
 import { redis } from "../../redis";
-import { createForgotPasswordLink } from "./createForgotPasswordLink";
+import { createTypeormConn } from "../../utils/createTypeormConn";
 import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount";
+import { testClient } from "../../utils/testClients";
 import { forgotPasswordLockedError } from "../login/errorMessages";
 import { passwordNotLongEnough } from "../register/errorMessages";
+import { createForgotPasswordLink } from "./createForgotPasswordLink";
 import { expiredKeyError } from "./errorMessages";
 
 import { faker } from "@faker-js/faker";

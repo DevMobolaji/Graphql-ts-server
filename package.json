@@ -5,7 +5,7 @@
    "main": "index.js",
    "scripts": {
       "start": "nodemon --exec ts-node --files src/index.ts",
-      "test-server": "ts-node --files src/index.ts",
+      "test-server": "nodemon --exec ts-node --files src/index.ts",
       "test": "jest --detectOpenHandles --forceExit",
       "watch": "tsc -w",
       "generate": "graphql-codegen"

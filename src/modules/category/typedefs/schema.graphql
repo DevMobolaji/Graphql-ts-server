@@ -1,0 +1,33 @@
+input AddCategoryInput {
+    name: String!
+  }
+
+input ProductsFilterInput {
+    onSale: Boolean
+  }
+
+type Product {
+    id: ID!
+    name: String!
+    description: String!
+    price: Float!
+    image: String!
+    quantity: Int!
+    onSale: Boolean!
+    category: Category
+}
+
+type Category {
+    id: ID!
+    name: String!
+    products(filter: ProductsFilterInput): [Product!]!
+}
+
+type Query {
+    categories: [Category!]!
+    category(id: ID!): Category
+}
+
+type Mutation {
+    AddCategory(input: AddCategoryInput!): Category!
+}
