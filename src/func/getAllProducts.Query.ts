@@ -12,11 +12,12 @@ export const getAllProduct = async () => {
 }
 
 export const getProductByFilter = async (filter: any) => {
+    const { onSale } = filter
     const query = TestDevSource
         .getRepository(Product)
         .createQueryBuilder("products")
         .leftJoinAndSelect("products.category", "category")
-    const { onSale } = filter
+    console.log(query)
 
     if (onSale) {
         const query = TestDevSource

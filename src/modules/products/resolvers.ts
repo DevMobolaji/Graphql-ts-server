@@ -1,6 +1,6 @@
 import { QueryProductArgs } from "../../generated-types/graphql";
 import { resolverMap } from "../../types/graphql-utils";
-import { getAllProduct, getProductById } from "../../func/getAllProducts.Query";
+import { getAllProduct, getProductByFilter, getProductById } from "../../func/getAllProducts.Query";
 import { createProdMutation } from "../../func/createProd.Mutation";
 
 export const resolvers: resolverMap = {
@@ -10,7 +10,7 @@ export const resolvers: resolverMap = {
         },
         productsByFilter: async (_, { filter }) => {
             console.log(filter)
-            return await getProductById(filter)
+            return await getProductByFilter(filter)
         },
         product: async (_, args: QueryProductArgs) => {
             const { id } = args
