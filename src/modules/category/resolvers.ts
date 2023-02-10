@@ -1,53 +1,25 @@
-import { Category } from "../../entity/Category";
-import { GraphQLError } from "graphql";
 import { resolverMap } from "../../types/graphql-utils";
+import { getAllCategory, getCategoryById } from "../../func/CategoryFunc/getAllCategory.Query.ts";
+import { createCategoryFunc } from "../../func/CategoryFunc/createCat.Mutation";
+import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
+import middleware from "../../MiddlewareFunc/middlewareFunc"
 
 export const resolvers: resolverMap = {
     Query: {
-        categories: async (): Promise<Category[]> => {
-            const category = await Category.find({ relations: { products: true } });
-
-            return category
-        },
-        category: (_, args) => {
+        categories: createMiddleware(middleware, async () => {
+            return await getAllCategory()
+        }),
+        category: createMiddleware(middleware, async (_, args) => {
             const { id } = args;
-            const category = Category.findOne({
-                where: { id }, relations: {
-                    products: true
-                }
-            })
-
-            if (!category) {
-                throw new GraphQLError("There's no category with that id", {
-                    extensions: {
-                        code: "",
-                        argument: "category"
-                    }
-                })
-            }
-            return category
-        }
+            return await getCategoryById(id)
+        }),
     },
 
     Mutation: {
-        AddCategory: async (_, args) => {
+        AddCategory: createMiddleware(middleware, async (_: any, args: { input: any; }) => {
             const { input } = args;
             const name = input?.name
-
-            if (!name) {
-                throw new GraphQLError("You must provide a category name", {
-                    extensions: {
-                        code: "GRAPHQL_VALIDATION_FAILED",
-                        argument: "category"
-                    }
-                })
-            }
-
-            const category = Category.create({
-                name
-            });
-            await category.save();
-            return category
-        }
+            return await createCategoryFunc(name)
+        })
     }
 }
