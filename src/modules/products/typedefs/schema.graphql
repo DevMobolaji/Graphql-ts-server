@@ -10,6 +10,11 @@ type Category {
     name: String!
 }
 
+type User {
+  id: ID!
+  email: String!
+}
+
 type Product {
     id: ID!
     name: String!
@@ -18,7 +23,8 @@ type Product {
     image: String!
     quantity: Int!
     onSale: Boolean!
-    category: Category!
+    category: Category
+    user: User
 }
 
 input AddProductInput {
@@ -26,17 +32,18 @@ input AddProductInput {
     description: String!
     price: Float!
     image: String!
-    quantity: Int
-    onSale: Boolean!
+    quantity: Int!
+    onSale: Boolean
     categoryId: String!
+    userId: String!
 }
 
 type Query {
-    product(id: ID!): Product!
+    product(id: ID!): Product
     products: [Product!]!
     productsByFilter(filter: ProductsFilterInput): [Product!]
 }
 
 type Mutation {
-    AddProduct(input: AddProductInput!): [Error!]
+    AddProduct(input: AddProductInput): [Error!]
 }

@@ -2,9 +2,11 @@ input AddCategoryInput {
     name: String!
   }
 
-input ProductsFilterInput {
-    onSale: Boolean
-  }
+type User {
+  id: ID!
+  email: String!
+}
+
 
 type Product {
     id: ID!
@@ -15,12 +17,14 @@ type Product {
     quantity: Int!
     onSale: Boolean!
     category: Category
+    userId: User
 }
 
 type Category {
     id: ID!
     name: String!
-    products(filter: ProductsFilterInput): [Product!]!
+    userId: String!
+    products: [Product!]!
 }
 
 type Query {

@@ -14,6 +14,10 @@ import { redis } from './redis';
 import * as path from "path"
 import * as fs from "fs"
 import { createTypeormConn } from './utils/createTypeormConn';
+import session from 'express-session';
+import helmet from 'helmet';
+let RedisStore = require("connect-redis")(session)
+import { redisSessionPrefix } from './constants';
 
 export const startServer = async () => {
     const schemas: GraphQLSchema[] = []
@@ -47,10 +51,29 @@ export const startServer = async () => {
                 ApolloServerPluginDrainHttpServer({ httpServer })
             ]
     });
-
+    await server.start();
     await createTypeormConn()
 
-    await server.start();
+    app.use(helmet());
+    app.use(
+        session({
+            store: new RedisStore({
+                client: redis, prefix: redisSessionPrefix
+            }),
+            name: "qid",
+            secret: "hjkfgjklajkjsmjlgvfjhd",
+            resave: false,
+            saveUninitialized: false,
+            cookie: {
+                httpOnly: true,
+                //secure: true,
+                secure: sanitizedConfig.NODE_ENV === "production",
+                maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+                sameSite: "None"
+            }
+        } as any)
+    );
+
     app.use(
         '',
         cors<cors.CorsRequest>(),

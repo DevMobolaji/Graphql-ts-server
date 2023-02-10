@@ -1,16 +1,18 @@
 import { QueryProductArgs } from "../../generated-types/graphql";
 import { resolverMap } from "../../types/graphql-utils";
-import { getAllProduct, getProductByFilter, getProductById } from "../../func/getAllProducts.Query";
-import { createProdMutation } from "../../func/createProd.Mutation";
+import { getAllProduct, getProductByFilter, getProductById } from "../../func/ProductFunc/getAllProducts.Query";
+import { createProdMutation } from "../../func/ProductFunc/createProd.Mutation";
+import { Product } from "../../entity/Products";
+// import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
+// import middleware from "../../MiddlewareFunc/middlewareFunc"
 
 export const resolvers: resolverMap = {
     Query: {
         products: async (_) => {
             return await getAllProduct()
         },
-        productsByFilter: async (_, { filter }) => {
-            console.log(filter)
-            return await getProductByFilter(filter)
+        productsByFilter: async (_, { filter }): Promise<Product[]> => {
+            return await getProductByFilter(filter);
         },
         product: async (_, args: QueryProductArgs) => {
             const { id } = args
@@ -18,10 +20,11 @@ export const resolvers: resolverMap = {
         },
     },
     Mutation: {
-        AddProduct: async (_, args): Promise<{ path: string; message: string; }[] | null> => {
+        AddProduct: async (_, args, { session }) => {
+            const { userId } = session
             const { input } = args;
             const { name, description, price, image, quantity, onSale, categoryId } = input;
-            return await createProdMutation(name, description, price, image, onSale, quantity, categoryId)
+            return await createProdMutation(name, description, price, image, quantity, onSale, categoryId, userId)
         }
-    }
+    },
 }
