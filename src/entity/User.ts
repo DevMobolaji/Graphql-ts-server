@@ -28,7 +28,7 @@ export class User extends BaseEntity {
     @Column({
         type: 'enum',
         enum: UserTypes,
-        default: UserTypes.USER
+        default: UserTypes.ADMIN
     })
     userType: UserTypes
 

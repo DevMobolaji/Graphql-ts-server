@@ -54,6 +54,8 @@ export const resolvers: resolverMap = {
 
             //login successful
             session.userId = user.id
+            session.userType = user.userType
+
             if (req.sessionID) {
                 await redis.lpush(`${userSessionIdPrefix}${user.id}`, req.sessionID)
             }

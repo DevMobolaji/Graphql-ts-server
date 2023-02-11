@@ -2,7 +2,7 @@ import { Resolver } from "../types/graphql-utils";
 import { GraphQLError } from "graphql/error";
 import { User } from "../entity/User";
 
-export default async (
+export const requiresAuth_AdminAccess = async (
     resolver: Resolver,
     parent: any,
     args: any,
@@ -33,6 +33,26 @@ export default async (
     }
     return result;
 };
+
+export const requiresAuth = async (
+    resolver: Resolver,
+    parent: any,
+    args: any,
+    context: any,
+    info: any
+) => {
+    const result = await resolver(parent, args, context, info);
+
+    if (!context.session || !context.session.userId) {
+        throw new GraphQLError("You must be authenticated to gain Access", {
+            extensions: {
+                code: "GRAPHQL_VALIDATION_FAILED",
+                argument: "AUTH_TYPE"
+            }
+        })
+    }
+    return result
+}
 
 // const createResolver = (resolver: any) => {
 //     const baseResolver = resolver

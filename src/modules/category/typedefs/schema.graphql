@@ -23,7 +23,6 @@ type Product {
 type Category {
     id: ID!
     name: String!
-    userId: String!
     products: [Product!]!
 }
 
