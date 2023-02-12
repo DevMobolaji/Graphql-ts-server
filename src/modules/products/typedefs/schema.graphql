@@ -35,7 +35,6 @@ input AddProductInput {
     quantity: Int!
     onSale: Boolean
     categoryId: String!
-    userId: String
 }
 
 type Query {

@@ -1,8 +1,9 @@
-//import { TestDevSource } from "../../data-source";
+import { TestDevSource } from "../../data-source";
 import { Category } from "../../entity/Category";
 import { Product } from "../../entity/Products";
+//import { User } from "../../entity/User";
 
-export const createProdMutation = async (name: any, description: any, price: any, image: any, quantity: any, onSale: any, categoryId: any, userId: any) => {
+export const createProdMutation = async (name: any, description: any, price: any, image: any, quantity: any, onSale: any, categoryId: any, userId: any,) => {
     try {
         if (!name || !description || !price || !image || !quantity || !categoryId) {
             return [{
@@ -17,6 +18,7 @@ export const createProdMutation = async (name: any, description: any, price: any
                 products: true
             }
         })
+        console.log(category)
 
         if (!category) {
             return [{
@@ -26,6 +28,7 @@ export const createProdMutation = async (name: any, description: any, price: any
         }
 
     } catch (error) {
+        console.log(error)
         if (error.code === '22P02') {
             return [{
                 path: "category",
@@ -33,17 +36,27 @@ export const createProdMutation = async (name: any, description: any, price: any
             }]
         }
     }
-    const product = Product.create({
-        name,
-        description,
-        price,
-        image,
-        quantity,
-        onSale,
-        category: categoryId,
-        user: userId
-    })
+    // const product = Product.create({
+    //     name,
+    //     description,
+    //     price,
+    //     image,
+    //     quantity,
+    //     onSale,
+    //     category: categoryId,
+    //     user: userId
+    // })
 
-    await product.save()
+    await TestDevSource
+        .createQueryBuilder()
+        .insert()
+        .into(Product)
+        .values([
+            { name: name, description, image, onSale, quantity, price, category: categoryId, user: userId },
+        ])
+        .returning("*")
+        .execute()
+
+    //await product.save()
     return null;
 }

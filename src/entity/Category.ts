@@ -3,7 +3,7 @@ import { Product } from "./Products"
 
 @Entity("category")
 export class Category extends BaseEntity {
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryGeneratedColumn('uuid')
     id: string
 
     @Column("varchar", { length: 255 })

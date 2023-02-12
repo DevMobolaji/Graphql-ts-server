@@ -1,4 +1,4 @@
-import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, BeforeInsert, OneToOne } from "typeorm";
+import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, BeforeInsert, OneToMany } from "typeorm";
 import * as bcryptjs from "bcryptjs"
 import { Product } from "./Products";
 
@@ -28,7 +28,7 @@ export class User extends BaseEntity {
     @Column({
         type: 'enum',
         enum: UserTypes,
-        default: UserTypes.ADMIN
+        default: UserTypes.USER
     })
     userType: UserTypes
 
@@ -45,6 +45,6 @@ export class User extends BaseEntity {
     @Column("boolean", { default: false })
     forgotPasswordLocked: boolean
 
-    @OneToOne(() => Product, (product) => product.user)
-    product: Product
+    @OneToMany(() => Product, (product) => product.user)
+    products: Product[]
 }

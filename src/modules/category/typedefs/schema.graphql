@@ -16,8 +16,6 @@ type Product {
     image: String!
     quantity: Int!
     onSale: Boolean!
-    category: Category
-    userId: User
 }
 
 type Category {
