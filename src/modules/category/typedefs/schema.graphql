@@ -2,6 +2,10 @@ input AddCategoryInput {
     name: String!
   }
 
+input UpdateCategoryInput {
+    name: String!
+}
+
 type User {
   id: ID!
   email: String!
@@ -31,4 +35,5 @@ type Query {
 
 type Mutation {
     AddCategory(input: AddCategoryInput!): Category!
+    updateCategory(id: ID!, input: UpdateCategoryInput!): Category
 }

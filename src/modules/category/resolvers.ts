@@ -1,8 +1,9 @@
 import { resolverMap } from "../../types/graphql-utils";
 import { getAllCategory, getCategoryById } from "../../func/CategoryFunc/getAllCategory.Query.ts";
-import { createCategoryFunc } from "../../func/CategoryFunc/createCat.Mutation";
+import { createCategoryFunc } from "../../func/CategoryFunc/createCategory.Mutation";
 import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
 import { requiresAuth, requiresAuth_AdminAccess } from "../../MiddlewareFunc/middlewareFunc";
+import { updateCategoryMutation } from "../../func/CategoryFunc/updateCategory.Mutation";
 
 
 export const resolvers: resolverMap = {
@@ -32,6 +33,11 @@ export const resolvers: resolverMap = {
 
             const name = input?.name
             return await createCategoryFunc(name)
+        }),
+        updateCategory: createMiddleware(requiresAuth_AdminAccess, async (_, args: { id: any, input: any }) => {
+            const { input, id } = args;
+
+            return await updateCategoryMutation(id, input);
         })
     }
 }

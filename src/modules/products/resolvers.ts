@@ -5,6 +5,7 @@ import { createProdMutation } from "../../func/ProductFunc/createProd.Mutation";
 import { Product } from "../../entity/Products";
 import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
 import { requiresAuth_AdminAccess, requiresAuth } from "../../MiddlewareFunc/middlewareFunc"
+import { updateProductMutation } from "../../func/ProductFunc/updateProduct.Mutation";
 
 export const resolvers: resolverMap = {
     Query: {
@@ -39,6 +40,11 @@ export const resolvers: resolverMap = {
             const { name, description, price, image, quantity, onSale, categoryId } = input;
 
             return await createProdMutation(name, description, price, image, quantity, onSale, categoryId, userId)
+        }),
+        updateProduct: createMiddleware(requiresAuth_AdminAccess, async (_, args: { id: any, input: any }) => {
+            const { input, id } = args;
+
+            return await updateProductMutation(id, input)
         })
     },
 }
