@@ -35,8 +35,17 @@ input AddProductInput {
     quantity: Int!
     onSale: Boolean
     categoryId: String!
-    userId: String
 }
+
+input UpdateProductInput {
+    name: String!
+    description: String!
+    quantity: Int!
+    image: String!
+    price: Float!
+    onSale: Boolean!
+    categoryId: String
+  }
 
 type Query {
     product(id: ID!): Product
@@ -46,4 +55,5 @@ type Query {
 
 type Mutation {
     AddProduct(input: AddProductInput): [Error!]
+    updateProduct(id: ID!, input: UpdateProductInput!): Product
 }

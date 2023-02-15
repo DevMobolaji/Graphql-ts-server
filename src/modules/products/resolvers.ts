@@ -4,7 +4,8 @@ import { getAllProduct, getProductByFilter, getProductById } from "../../func/Pr
 import { createProdMutation } from "../../func/ProductFunc/createProd.Mutation";
 import { Product } from "../../entity/Products";
 import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
-import { requiresAuth, requiresAuth_AdminAccess } from "../../MiddlewareFunc/middlewareFunc"
+import { requiresAuth_AdminAccess, requiresAuth } from "../../MiddlewareFunc/middlewareFunc"
+import { updateProductMutation } from "../../func/ProductFunc/updateProduct.Mutation";
 
 export const resolvers: resolverMap = {
     Query: {
@@ -31,12 +32,19 @@ export const resolvers: resolverMap = {
     Mutation: {
         AddProduct: createMiddleware(requiresAuth_AdminAccess, async (_, args, { session }) => {
             const { userId, userType } = session
+
             if (!userId) return null;
-            if (userType !== "ADMIN") return null
+            if (userType !== "ADMIN") return null;
 
             const { input } = args;
             const { name, description, price, image, quantity, onSale, categoryId } = input;
+
             return await createProdMutation(name, description, price, image, quantity, onSale, categoryId, userId)
+        }),
+        updateProduct: createMiddleware(requiresAuth_AdminAccess, async (_, args: { id: any, input: any }) => {
+            const { input, id } = args;
+
+            return await updateProductMutation(id, input)
         })
     },
 }
