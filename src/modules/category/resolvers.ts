@@ -4,6 +4,7 @@ import { createCategoryFunc } from "../../func/CategoryFunc/createCategory.Mutat
 import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
 import { requiresAuth, requiresAuth_AdminAccess } from "../../MiddlewareFunc/middlewareFunc";
 import { updateCategoryMutation } from "../../func/CategoryFunc/updateCategory.Mutation";
+import { deleteCategoryMutation } from "../../func/CategoryFunc/deleteCategory.Mutation";
 
 
 export const resolvers: resolverMap = {
@@ -34,10 +35,23 @@ export const resolvers: resolverMap = {
             const name = input?.name
             return await createCategoryFunc(name)
         }),
-        updateCategory: createMiddleware(requiresAuth_AdminAccess, async (_, args: { id: any, input: any }) => {
+        updateCategory: createMiddleware(requiresAuth_AdminAccess, async (_, args: { id: any, input: any }, { session }) => {
+            const { userId, userType } = session;
             const { input, id } = args;
 
+            if (!userId) return null;
+            if (userType !== "ADMIN") return null;
+
             return await updateCategoryMutation(id, input);
+        }),
+        deleteCategory: createMiddleware(createMiddleware, async (_, args: { id: any }, { session }) => {
+            const { userId, userType } = session;
+            const { id } = args;
+
+            if (!userId) return null;
+            if (userType !== "ADMIN") return null;
+
+            return await deleteCategoryMutation(id)
         })
     }
 }
