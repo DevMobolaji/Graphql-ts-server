@@ -25,10 +25,6 @@ export const updateCategoryMutation = async (id: any, input: any) => {
         })
     }
 
-    // const res = await Category.update({ id: cte.id }, {
-    //     name: name
-    // })
-
     await TestDevSource
         .createQueryBuilder()
         .update(Category)

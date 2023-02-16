@@ -18,7 +18,6 @@ export const createProdMutation = async (name: any, description: any, price: any
                 products: true
             }
         })
-        console.log(category)
 
         if (!category) {
             return [{
@@ -28,7 +27,6 @@ export const createProdMutation = async (name: any, description: any, price: any
         }
 
     } catch (error) {
-        console.log(error)
         if (error.code === '22P02') {
             return [{
                 path: "category",

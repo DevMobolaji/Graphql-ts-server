@@ -36,7 +36,7 @@ export class Product extends BaseEntity {
     @UpdateDateColumn()
     updated_at: Date; // Last updated date
 
-    @ManyToOne(() => Category, (category) => category.products)
+    @ManyToOne(() => Category, (category) => category.products, { onDelete: "SET NULL" })
     category: Category
 
     @ManyToOne(() => User, (user) => user.products)
