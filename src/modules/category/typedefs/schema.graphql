@@ -30,7 +30,7 @@ type Category {
 
 type Query {
     categories: [Category!]!
-    category(id: ID!): Category
+    category(id: ID!): Category!
 }
 
 type Mutation {

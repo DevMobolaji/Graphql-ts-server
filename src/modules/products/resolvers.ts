@@ -6,8 +6,21 @@ import { Product } from "../../entity/Products";
 import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
 import { requiresAuth_AdminAccess, requiresAuth } from "../../MiddlewareFunc/middlewareFunc"
 import { updateProductMutation } from "../../func/ProductFunc/updateProduct.Mutation";
+import { Review } from "../../entity/Review";
+//import { Review } from "../../entity/Review";
 
 export const resolvers: resolverMap = {
+    Product: {
+        reviews: async (parent) => {
+            const review = await Review.find({
+                relations: {
+                    product: true
+                }
+            })
+            return review.filter((review) => review.product.id === parent.id)
+        },
+    },
+
     Query: {
         products: createMiddleware(requiresAuth, async (_, __, { session }) => {
             const { userId } = session;

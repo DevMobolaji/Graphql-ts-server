@@ -1,0 +1,49 @@
+# import Error from "./shared.graphql"
+type User {
+  id: ID!
+  email: String!
+}
+
+type Product {
+    id: ID!
+    name: String!
+    description: String!
+    price: Float!
+    image: String!
+    quantity: Int!
+    onSale: Boolean!
+}
+
+type Review {
+    id: ID!
+    title: String!
+    comment: String!
+    rating: Int!
+    product: Product!
+    user: User
+  }
+
+input AddReviewInput {
+    title: String!
+    comment: String!
+    rating: Int!
+    productId: ID!
+  }
+
+  input UpdateReviewInput {
+    date: String!
+    title: String!
+    comment: String!
+    rating: Int!
+    productId: ID
+  }
+
+type Query {
+  reviews: [Review!]!
+  review(id: ID!): Review!
+}
+
+type Mutation {
+    AddReview(input: AddReviewInput): [Error!]
+    updateReview(id: ID!, input: UpdateReviewInput!): Review
+}

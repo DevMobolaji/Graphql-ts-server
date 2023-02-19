@@ -1,6 +1,7 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, BeforeInsert, OneToMany } from "typeorm";
 import * as bcryptjs from "bcryptjs"
 import { Product } from "./Products";
+import { Review } from "./Review";
 
 
 export enum UserTypes {
@@ -47,4 +48,7 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Product, (product) => product.user)
     products: Product[]
+
+    @OneToMany(() => Review, (review) => review.user)
+    reviews: Review[]
 }

@@ -8,6 +8,7 @@ export const getAllProduct = async () => {
         .createQueryBuilder("products")
         .leftJoinAndSelect("products.category", "category")
         .leftJoinAndSelect("products.user", "user")
+        .leftJoinAndSelect("products.reviews", "reviews")
 
     const products = await query.getMany()
     return products
@@ -20,6 +21,7 @@ export const getProductByFilter = async (filter: any) => {
         .createQueryBuilder("products")
         .leftJoinAndSelect("products.category", "category")
         .leftJoinAndSelect("products.user", "user")
+        .leftJoinAndSelect("products.reviews", "review")
 
     if (onSale) {
         const query = TestDevSource
@@ -28,6 +30,7 @@ export const getProductByFilter = async (filter: any) => {
             .where("products.onSale = :onSale", { onSale })
             .leftJoinAndSelect("products.category", "category")
             .leftJoinAndSelect("products.user", "user")
+            .leftJoinAndSelect("products.reviews", "review")
 
         const products = await query.getMany()
 
@@ -44,7 +47,8 @@ export const getProductById = async (id: any) => {
             { id },
         relations: {
             category: true,
-            user: true
+            user: true,
+            reviews: true,
         }
     })
 

@@ -1,6 +1,5 @@
 # import Error from "./shared.graphql"
 
-
 input ProductsFilterInput {
     onSale: Boolean
 }
@@ -15,6 +14,13 @@ type User {
   email: String!
 }
 
+type Review {
+    id: ID!
+    title: String!
+    comment: String!
+    rating: Int!
+  }
+
 type Product {
     id: ID!
     name: String!
@@ -25,6 +31,7 @@ type Product {
     onSale: Boolean!
     category: Category
     user: User
+    reviews: [Review!]!
 }
 
 input AddProductInput {
@@ -48,12 +55,12 @@ input UpdateProductInput {
   }
 
 type Query {
-    product(id: ID!): Product
+    product(id: ID!): Product!
     products: [Product!]!
-    productsByFilter(filter: ProductsFilterInput): [Product!]
+    productsByFilter(filter: ProductsFilterInput): [Product!]!
 }
 
 type Mutation {
-    AddProduct(input: AddProductInput): [Error!]
-    updateProduct(id: ID!, input: UpdateProductInput!): Product
+    AddProduct(input: AddProductInput!): [Error!]
+    updateProduct(id: ID!, input: UpdateProductInput!): Product!
 }

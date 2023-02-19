@@ -1,6 +1,7 @@
-import { BaseEntity, BeforeUpdate, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
+import { BaseEntity, BeforeUpdate, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm"
 import { Category } from "./Category"
 import { User } from "./User"
+import { Review } from "./Review"
 
 @Entity("products")
 export class Product extends BaseEntity {
@@ -41,4 +42,7 @@ export class Product extends BaseEntity {
 
     @ManyToOne(() => User, (user) => user.products)
     user: User
-}
+
+    @OneToMany(() => Review, (review) => review.product)
+    reviews: Review[]
+}                                                                               
