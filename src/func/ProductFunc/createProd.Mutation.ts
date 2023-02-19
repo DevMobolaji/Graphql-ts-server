@@ -3,7 +3,7 @@ import { Category } from "../../entity/Category";
 import { Product } from "../../entity/Products";
 //import { User } from "../../entity/User";
 
-export const createProdMutation = async (name: any, description: any, price: any, image: any, quantity: any, onSale: any, categoryId: any, userId: any,) => {
+export const createProdMutation = async (name: any, description: any, price: any, image: any, quantity: any, onSale: any, categoryId: any, userId: any) => {
     try {
         if (!name || !description || !price || !image || !quantity || !categoryId) {
             return [{
