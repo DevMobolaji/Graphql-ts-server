@@ -20,7 +20,7 @@ type Review {
     comment: String!
     rating: Int!
     product: Product!
-    user: User
+    user: User!
   }
 
 input AddReviewInput {
@@ -31,11 +31,10 @@ input AddReviewInput {
   }
 
   input UpdateReviewInput {
-    date: String!
     title: String!
     comment: String!
     rating: Int!
-    productId: ID
+    productId: ID!
   }
 
 type Query {
@@ -46,4 +45,5 @@ type Query {
 type Mutation {
     AddReview(input: AddReviewInput): [Error!]
     updateReview(id: ID!, input: UpdateReviewInput!): Review
+    deleteReview(id: ID!): Boolean!
 }

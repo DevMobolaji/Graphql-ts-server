@@ -31,7 +31,7 @@ type Product {
     onSale: Boolean!
     category: Category
     user: User
-    reviews: [Review!]!
+    reviews: [Review!]
 }
 
 input AddProductInput {
@@ -63,4 +63,5 @@ type Query {
 type Mutation {
     AddProduct(input: AddProductInput!): [Error!]
     updateProduct(id: ID!, input: UpdateProductInput!): Product!
+    deleteProduct(id: ID!): Boolean!
 }
