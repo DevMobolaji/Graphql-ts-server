@@ -16,10 +16,10 @@ export class Review extends BaseEntity {
     @Column({ type: "int" })
     rating: Number
 
-    @ManyToOne(() => Product, (product) => product.reviews)
+    @ManyToOne(() => Product, (product) => product.reviews, { onDelete: "CASCADE" })
     product: Product
 
-    @ManyToOne(() => User, (user) => user.reviews)
+    @ManyToOne(() => User, (user) => user.reviews, { onDelete: "CASCADE" })
     user: User
 
 

@@ -1,5 +1,5 @@
 import { resolverMap } from "../../types/graphql-utils";
-import { getAllCategory, getCategoryById } from "../../func/CategoryFunc/getAllCategory.Query.ts";
+import { getAllCategory, getCategoryById } from "../../func/getAllCategory.Query.ts";
 import { createCategoryFunc } from "../../func/CategoryFunc/createCategory.Mutation";
 import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
 import { requiresAuth, requiresAuth_AdminAccess } from "../../MiddlewareFunc/middlewareFunc";
