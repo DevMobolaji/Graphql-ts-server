@@ -14,6 +14,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+<<<<<<< HEAD
+=======
+     env: 
+      CI: true
+
+>>>>>>> 1bc06eef279a6fa66cc39d1061b144c35db6badf
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x]
