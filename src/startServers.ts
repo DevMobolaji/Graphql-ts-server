@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import express from 'express'
+import express, { Request, Response } from 'express'
 import { createTypeormConn } from "./utils/createTypeormConn"
 import * as path from "path"
 import { loadSchemaSync } from '@graphql-tools/load'
@@ -8,7 +8,6 @@ import * as fs from "fs"
 import { makeExecutableSchema, mergeSchemas } from '@graphql-tools/schema'
 import { GraphQLSchema } from "graphql"
 import { ApolloServer } from '@apollo/server'
-//import https from "https"
 import http from "http"
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer"
 import { expressMiddleware } from "@apollo/server/express4"
@@ -20,9 +19,9 @@ let RedisStore = require("connect-redis")(session)
 import cors from "cors"
 import { redisSessionPrefix } from "./constants"
 import helmet from "helmet"
-// import passport from "passport"
-// import { Strategy } from "passport-google-oauth20"
-// import { verifyCallback } from "./Restful routes/verifyCallback"
+import passport from "passport"
+import { Strategy } from "passport-google-oauth20"
+import { verifyCallback } from "./Restful routes/verifyCallback"
 
 // import rateLimit from 'express-rate-limit'
 // import rateLimitRedisStore from "rate-limit-redis";
@@ -53,15 +52,10 @@ export const startServer = async () => {
     await createTypeormConn()
 
 
-    // const httpServer = https.createServer({
-    //     key: fs.readFileSync('./src/ssl/server.pem'),
-    //     cert: fs.readFileSync('./src/ssl/cert.pem'),
-    // }, app);
-
-    // const config = {
-    //     CLIENT_ID: sanitizedConfig.CLIENT_ID,
-    //     SECRET_CLIENT: sanitizedConfig.SECRET_CLIENT
-    // }
+    const config = {
+        CLIENT_ID: sanitizedConfig.CLIENT_ID,
+        SECRET_CLIENT: sanitizedConfig.SECRET_CLIENT
+    }
 
     //SERVER STARTRUP
     const server = new ApolloServer({
@@ -75,15 +69,15 @@ export const startServer = async () => {
     await server.start()
 
     //PASSPORT CONFIG FOR GOOGLE AUTH
-    // app.use(passport.initialize())
+    app.use(passport.initialize())
 
-    // const AUTH_OPTIONS = {
-    //     callbackURL: 'https://localhost:4000/auth/google/callback',
-    //     clientID: config.CLIENT_ID,
-    //     clientSecret: config.SECRET_CLIENT
-    // }
+    const AUTH_OPTIONS = {
+        callbackURL: 'https://localhost:4000/auth/google/callback',
+        clientID: config.CLIENT_ID,
+        clientSecret: config.SECRET_CLIENT
+    }
 
-    // passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
+    passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
 
     //EXPRESS MIDDLEWARE
     app.use(helmet());
@@ -117,20 +111,20 @@ export const startServer = async () => {
         })
     );
 
-    // app.get("/auth/google",
-    //     passport.authenticate("google", {
-    //         scope: ["email", "profile"]
-    //     })
-    // )
+    app.get("/auth/google",
+        passport.authenticate("google", {
+            scope: ["email", "profile"]
+        })
+    )
 
-    // app.get("/auth/google/callback", passport.authenticate("google", {
-    //     session: false
-    // }), (req: Request, res: Response) => {
-    //     (req.session as any).userId = (req.user as any).id;
-    //     // @todo redirect to frontend
-    //     res.redirect("http://localhost:4000");
-    //     console.log("Google called us back")
-    // })
+    app.get("/auth/google/callback", passport.authenticate("google", {
+        session: false
+    }), (req: Request, res: Response) => {
+        (req.session as any).userId = (req.user as any).id;
+        // @todo redirect to frontend
+        res.redirect("http://localhost:4000");
+        console.log("Google called us back")
+    })
 
     // const limiter = rateLimit({
     //     windowMs: 15 * 60 * 1000, // 15 minutes
