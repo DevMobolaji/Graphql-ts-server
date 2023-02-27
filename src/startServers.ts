@@ -23,8 +23,10 @@ import passport from "passport"
 import { Strategy } from "passport-google-oauth20"
 import { verifyCallback } from "./Restful routes/verifyCallback"
 
-// import rateLimit from 'express-rate-limit'
-// import rateLimitRedisStore from "rate-limit-redis";
+import rateLimit from 'express-rate-limit'
+//import rateLimitRedisStore from "rate-limit-redis";
+
+import * as morgan from 'morgan'
 
 export const startServer = async () => {
     const schemas: GraphQLSchema[] = []
@@ -111,6 +113,8 @@ export const startServer = async () => {
         })
     );
 
+    app.use(morgan('dev'))
+
     app.get("/auth/google",
         passport.authenticate("google", {
             scope: ["email", "profile"]
@@ -126,16 +130,14 @@ export const startServer = async () => {
         console.log("Google called us back")
     })
 
-    // const limiter = rateLimit({
-    //     windowMs: 15 * 60 * 1000, // 15 minutes
-    //     max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-    //     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    //     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    const limiter = rateLimit({
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+        standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+        legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    })
 
-    //     store: new rateLimitRedisStore({})
-    // })
-
-    // app.use(limiter)
+    app.use(limiter)
 
     await new Promise<void>((resolve) => httpServer.listen({ port: sanitizedConfig.PORT }, resolve))
     console.log(`🚀 Server ready at http://localhost:5000/`);
