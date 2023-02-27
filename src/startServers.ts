@@ -119,7 +119,7 @@ export const startServer = async () => {
         passport.authenticate("google", {
             scope: ["email", "profile"]
         })
-    )
+    );
 
     app.get("/auth/google/callback", passport.authenticate("google", {
         session: false
@@ -142,7 +142,7 @@ export const startServer = async () => {
         }),
     })
 
-    app.use(limiter)
+    app.use(limiter);
 
     await new Promise<void>((resolve) => httpServer.listen({ port: sanitizedConfig.PORT }, resolve))
     console.log(`🚀 Server ready at http://localhost:5000/`);
