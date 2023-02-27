@@ -1,4 +1,4 @@
-import { Category } from "../entity/Category";
+import { Category } from "../../entity/Category";
 import { GraphQLError } from "graphql";
 //import { Product } from "../../entity/Products";
 

@@ -1,6 +1,8 @@
 import { TestDevSource } from "../../data-source"
 import { Product } from "../../entity/Products"
 import { GraphQLError } from "graphql";
+import { Review } from "../../entity/Review";
+//import { Review } from "../../entity/Review";
 
 export const getAllProduct = async () => {
     const query = TestDevSource
@@ -15,7 +17,7 @@ export const getAllProduct = async () => {
 }
 
 export const getProductByFilter = async (filter: any) => {
-    const { onSale } = filter;
+
     const query = TestDevSource
         .getRepository(Product)
         .createQueryBuilder("products")
@@ -23,19 +25,58 @@ export const getProductByFilter = async (filter: any) => {
         .leftJoinAndSelect("products.user", "user")
         .leftJoinAndSelect("products.reviews", "review")
 
-    if (onSale) {
-        const query = TestDevSource
-            .getRepository(Product)
-            .createQueryBuilder("products")
-            .where("products.onSale = :onSale", { onSale })
-            .leftJoinAndSelect("products.category", "category")
-            .leftJoinAndSelect("products.user", "user")
-            .leftJoinAndSelect("products.reviews", "review")
+    if (filter) {
+        const { onSale, avgRating } = filter;
 
-        const products = await query.getMany()
+        if (onSale) {
+            const query = TestDevSource
+                .getRepository(Product)
+                .createQueryBuilder("products")
+                .where("products.onSale = :onSale", { onSale })
+                .leftJoinAndSelect("products.category", "category")
+                .leftJoinAndSelect("products.user", "user")
+                .leftJoinAndSelect("products.reviews", "review")
 
-        return products;
+            const products = await query.getMany()
+            return products;
+        }
+
+        if ([1, 2, 3, 4, 5].includes(avgRating)) {
+            const products = await Product.find({
+                relations: {
+                    reviews: true,
+                    user: true
+                }
+            })
+
+            const reviews = await Review.find({
+                relations: {
+                    product: true,
+                    user: true
+                }
+            })
+
+            const p = products.filter((product) => {
+                let sumRating: Number = 0;
+                let numberOfReviews = 0;
+
+                reviews.forEach((review) => {
+
+                    if (review.product.id === product.id) {
+                        sumRating += (review.rating as any)
+                        numberOfReviews++;
+                    }
+                })
+
+                const avgProductRating = (sumRating as any) / numberOfReviews;
+
+                return avgProductRating >= avgRating;
+            })
+
+            return p
+        }
     }
+
     const products = await query.getMany()
 
     return products;

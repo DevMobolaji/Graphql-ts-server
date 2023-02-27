@@ -2,6 +2,7 @@
 
 input ProductsFilterInput {
     onSale: Boolean
+    avgRating: Int
 }
 
 type Category {
