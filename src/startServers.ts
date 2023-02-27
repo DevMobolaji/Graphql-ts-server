@@ -89,7 +89,7 @@ export const startServer = async () => {
                 client: redis, prefix: redisSessionPrefix
             }),
             name: "qid",
-            secret: "hjkfgjklajkjsmjlgvfjhd",
+            secret: sanitizedConfig.SECRET_CLIENT,
             resave: false,
             saveUninitialized: false,
             cookie: {
