@@ -24,9 +24,9 @@ import { Strategy } from "passport-google-oauth20"
 import { verifyCallback } from "./Restful routes/verifyCallback"
 
 import rateLimit from 'express-rate-limit'
-//import rateLimitRedisStore from "rate-limit-redis";
+import rateLimitRedisStore from "rate-limit-redis";
 
-import * as morgan from 'morgan'
+const morgan = require("morgan")
 
 export const startServer = async () => {
     const schemas: GraphQLSchema[] = []
@@ -135,6 +135,11 @@ export const startServer = async () => {
         max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
         standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
         legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+
+        store: new rateLimitRedisStore({
+            // @ts-expect-error - Known issue: the `call` function is not present in @types/ioredis
+            sendCommand: (...args: string[]) => redis.call(...args),
+        }),
     })
 
     app.use(limiter)
