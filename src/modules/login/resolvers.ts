@@ -30,6 +30,7 @@ export const resolvers: resolverMap = {
         login: async (_, args, { session, redis, req }) => {
             const { email, password } = args;
             const user = await User.findOne({ where: { email } })
+            console.log(user)
 
 
             if (!user) {

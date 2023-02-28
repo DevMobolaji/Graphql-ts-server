@@ -1,6 +1,5 @@
 import "reflect-metadata"
 import express, { Request, Response } from 'express'
-import { createTypeormConn } from "./utils/createTypeormConn"
 import * as path from "path"
 import { loadSchemaSync } from '@graphql-tools/load'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
@@ -25,6 +24,7 @@ import { verifyCallback } from "./Restful routes/verifyCallback"
 
 import rateLimit from 'express-rate-limit'
 import rateLimitRedisStore from "rate-limit-redis";
+import { AppDataSource } from "./data-source"
 
 const morgan = require("morgan")
 
@@ -42,16 +42,10 @@ export const startServer = async () => {
         }))
     })
 
-    if (sanitizedConfig.NODE_ENV === "Test") {
-        redis.flushdb()
-        redis.flushall()
-    }
-
-
     const schema = mergeSchemas({ schemas })
     const app = express();
     const httpServer = http.createServer(app);
-    await createTypeormConn()
+    await AppDataSource.initialize()
 
 
     const config = {
@@ -94,8 +88,8 @@ export const startServer = async () => {
             saveUninitialized: false,
             cookie: {
                 httpOnly: true,
-                //secure: true,
-                secure: sanitizedConfig.NODE_ENV === "production",
+                secure: false,
+                //secure: sanitizedConfig.NODE_ENV === "production",
                 maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
                 sameSite: "None"
             }
@@ -105,7 +99,7 @@ export const startServer = async () => {
     app.use(morgan('combined'))
     app.use("",
         cors<cors.CorsRequest>({
-            origin: sanitizedConfig.NODE_ENV === "test" ? "*" : "http://localhost:4000/",
+            origin: sanitizedConfig.NODE_ENV === "test" ? "*" : "http://localhost:5000/",
             credentials: true
         }),
         json(),

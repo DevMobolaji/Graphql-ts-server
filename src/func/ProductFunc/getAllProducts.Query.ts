@@ -1,11 +1,11 @@
-import { TestDevSource } from "../../data-source"
+import { AppDataSource } from "../../data-source"
 import { Product } from "../../entity/Products"
 import { GraphQLError } from "graphql";
 import { Review } from "../../entity/Review";
 //import { Review } from "../../entity/Review";
 
 export const getAllProduct = async () => {
-    const query = TestDevSource
+    const query = AppDataSource
         .getRepository(Product)
         .createQueryBuilder("products")
         .leftJoinAndSelect("products.category", "category")
@@ -18,7 +18,7 @@ export const getAllProduct = async () => {
 
 export const getProductByFilter = async (filter: any) => {
 
-    const query = TestDevSource
+    const query = AppDataSource
         .getRepository(Product)
         .createQueryBuilder("products")
         .leftJoinAndSelect("products.category", "category")
@@ -29,7 +29,7 @@ export const getProductByFilter = async (filter: any) => {
         const { onSale, avgRating } = filter;
 
         if (onSale) {
-            const query = TestDevSource
+            const query = AppDataSource
                 .getRepository(Product)
                 .createQueryBuilder("products")
                 .where("products.onSale = :onSale", { onSale })

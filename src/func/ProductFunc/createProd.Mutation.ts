@@ -1,4 +1,4 @@
-import { TestDevSource } from "../../data-source";
+import { AppDataSource } from "../../data-source";
 import { Category } from "../../entity/Category";
 import { Product } from "../../entity/Products";
 //import { User } from "../../entity/User";
@@ -45,12 +45,12 @@ export const createProdMutation = async (name: any, description: any, price: any
     //     user: userId
     // })
 
-    await TestDevSource
+    await AppDataSource
         .createQueryBuilder()
         .insert()
         .into(Product)
         .values([
-            { name: name, description, image, onSale, quantity, price, category: categoryId, user: userId },
+            { name, description, image, onSale, quantity, price, category: categoryId, user: userId },
         ])
         .returning("*")
         .execute()

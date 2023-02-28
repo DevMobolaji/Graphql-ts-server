@@ -27,6 +27,8 @@ export const resolvers: resolverMap = {
             }
             const { email, password } = args;
             const userAlredyExists = await User.findOne({ where: { email } })
+            console.log(args)
+            console.log(userAlredyExists)
 
             if (userAlredyExists) {
                 return [
@@ -46,8 +48,6 @@ export const resolvers: resolverMap = {
 
             const link = await createConfirmEmailLinkUrl(url, user.id, redis)
             await sendEmail(email, link)
-            // const url1 = link.toString().split("/")[4]; 
-            // console.log(url1)
             return null
         },
         confirmEmail: async (_, args, { redis }) => {

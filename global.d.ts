@@ -7,5 +7,7 @@ declare namespace NodeJS {
     MONGO_URI: string
     CLIENT_ID: string
     SECRET_CLIENT: string
+    EMAIL: string
+    PASSWORD: string
   }
 }

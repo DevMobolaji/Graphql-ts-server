@@ -1,9 +1,9 @@
 import { GraphQLError } from "graphql/error/GraphQLError";
-import { TestDevSource } from "../../data-source";
+import { AppDataSource } from "../../data-source";
 import { Review } from "../../entity/Review";
 
 export const getAllReview = async () => {
-    const query = TestDevSource
+    const query = AppDataSource
         .getRepository(Review)
         .createQueryBuilder("reviews")
         .leftJoinAndSelect("reviews.product", "product")

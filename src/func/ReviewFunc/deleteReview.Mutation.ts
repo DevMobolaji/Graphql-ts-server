@@ -1,4 +1,4 @@
-import { TestDevSource } from "../../data-source"
+import { AppDataSource } from "../../data-source"
 import { Review } from "../../entity/Review"
 import { GraphQLError } from "graphql/error/GraphQLError"
 
@@ -14,7 +14,7 @@ export const deleteReviewMutation = async (id: any) => {
         })
     }
 
-    await TestDevSource
+    await AppDataSource
         .createQueryBuilder()
         .delete()
         .from(Review)
