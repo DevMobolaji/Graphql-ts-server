@@ -2,6 +2,7 @@ import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, BeforeInsert, OneTo
 import * as bcryptjs from "bcryptjs"
 import { Product } from "./Products";
 import { Review } from "./Review";
+import { Cart } from "./Cart";
 
 
 export enum UserTypes {
@@ -51,4 +52,7 @@ export class User extends BaseEntity {
 
     @OneToMany(() => Review, (review) => review.user)
     reviews: Review[]
+
+    @OneToMany(() => Cart, cart => cart.user)
+    carts: Cart[];
 }

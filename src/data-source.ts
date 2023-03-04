@@ -8,7 +8,7 @@ export const AppDataSource = new DataSource({
     port: 5432,
     username: "postgres",
     password: sanitizedConfig.dbPass,
-    database: "graphql-ts-server",
+    database: "graphql_ts_server_backend",
     synchronize: true,
     logging: false,
     entities: ["src/entity/**/*.ts"],

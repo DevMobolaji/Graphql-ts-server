@@ -2,7 +2,6 @@ import { AppDataSource } from "../../data-source"
 import { Product } from "../../entity/Products"
 import { GraphQLError } from "graphql";
 import { Review } from "../../entity/Review";
-//import { Review } from "../../entity/Review";
 
 export const getAllProduct = async () => {
     const query = AppDataSource

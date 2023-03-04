@@ -1,0 +1,58 @@
+type User {
+  id: ID!
+  email: String!
+  # ... other fields ...
+}
+
+type Category {
+    id: ID!
+    name: String!
+}
+
+type Product {
+    id: ID!
+    name: String!
+    description: String!
+    price: Float!
+    image: String!
+    quantity: Int!
+    category: Category
+    user: User
+    # reviews: [Review!]
+}
+
+type CartItem {
+  id: ID!
+  product: Product!
+  unitTotal: Int!
+  lineTotal: Int!
+  quantity: Int!
+}
+
+# type Money {
+#   formatted: String!
+#   amount: Int!
+# }
+
+type Cart {
+    id: ID!
+    user: User!
+    cartItem: [CartItem!]!
+    totalItem: Int
+    subTotal: Int
+}
+
+
+type Query {
+    Cart: [Cart!]!
+    CartById(id: ID!): Cart
+}
+
+input addToCartInput {
+  productId: String!
+  quantity: Int!
+}
+
+type Mutation {
+  addItem(input: addToCartInput): Cart
+}

@@ -27,8 +27,6 @@ export const resolvers: resolverMap = {
             }
             const { email, password } = args;
             const userAlredyExists = await User.findOne({ where: { email } })
-            console.log(args)
-            console.log(userAlredyExists)
 
             if (userAlredyExists) {
                 return [
@@ -54,7 +52,6 @@ export const resolvers: resolverMap = {
             try {
                 const { id } = args;
                 const userId = await redis.get(id as any)
-                console.log(userId)
 
                 if (!userId) {
                     //throw new Error("User not found")
