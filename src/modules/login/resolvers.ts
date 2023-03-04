@@ -3,6 +3,7 @@ import { resolverMap } from "../../types/graphql-utils";
 import { User } from "../../entity/User";
 import { confirmEmailError, forgotPasswordLockedError, invalidLogin } from "./errorMessages";
 import { userSessionIdPrefix } from "../../constants";
+import { createCart } from "../../func/CartFunc/createCart";
 
 const InvalidLogin = [
     {
@@ -30,7 +31,6 @@ export const resolvers: resolverMap = {
         login: async (_, args, { session, redis, req }) => {
             const { email, password } = args;
             const user = await User.findOne({ where: { email } })
-
 
             if (!user) {
                 return InvalidLogin
@@ -60,6 +60,7 @@ export const resolvers: resolverMap = {
                 await redis.lpush(`${userSessionIdPrefix}${user.id}`, req.sessionID)
             }
 
+            await createCart(user.id)
             return null;
         }
     }

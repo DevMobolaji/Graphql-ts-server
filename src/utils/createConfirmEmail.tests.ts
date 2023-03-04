@@ -5,7 +5,6 @@ import { createTypeormConn, createTypeormDisConn } from "./createTypeormConn";
 import sanitizedConfig from "../config";
 //import axios from "axios";
 import { redis } from "../redis"
-//import { fetch } from "@whatwg-node/fetch";
 import request, { gql } from "graphql-request";
 // jest.useFakeTimers()
 

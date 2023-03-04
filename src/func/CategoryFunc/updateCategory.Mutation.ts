@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql/error/GraphQLError"
 import { Category } from "../../entity/Category"
-import { TestDevSource } from "../../data-source"
+import { AppDataSource } from "../../data-source"
 
 export const updateCategoryMutation = async (id: any, input: any) => {
     const { name } = input
@@ -25,7 +25,7 @@ export const updateCategoryMutation = async (id: any, input: any) => {
         })
     }
 
-    await TestDevSource
+    await AppDataSource
         .createQueryBuilder()
         .update(Category)
         .set({ name: name })

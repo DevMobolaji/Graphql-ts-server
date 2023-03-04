@@ -1,5 +1,5 @@
 //import { TestDevSource } from "../../data-source";
-import { TestDevSource } from "../../data-source";
+import { AppDataSource } from "../../data-source";
 import { Product } from "../../entity/Products";
 import { Review } from "../../entity/Review";
 
@@ -37,7 +37,7 @@ export const createReviewMutation = async (title: any, comment: any, rating: any
         }
     }
 
-    await TestDevSource
+    await AppDataSource
         .createQueryBuilder()
         .insert()
         .into(Review)

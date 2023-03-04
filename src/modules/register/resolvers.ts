@@ -46,15 +46,12 @@ export const resolvers: resolverMap = {
 
             const link = await createConfirmEmailLinkUrl(url, user.id, redis)
             await sendEmail(email, link)
-            // const url1 = link.toString().split("/")[4]; 
-            // console.log(url1)
             return null
         },
         confirmEmail: async (_, args, { redis }) => {
             try {
                 const { id } = args;
                 const userId = await redis.get(id as any)
-                console.log(userId)
 
                 if (!userId) {
                     //throw new Error("User not found")

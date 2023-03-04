@@ -4,12 +4,10 @@ import { GraphQLError } from "graphql/error/GraphQLError"
 
 export const updateReviewMutation = async (id: any, input: any) => {
     const { title, rating, comment, productId } = input;
-    console.log(id)
 
     const review = await Review.findOne({ where: { id } })
 
     const reviewid = productId
-    console.log(reviewid)
 
     const product = await Product.findOne({ where: { id: reviewid } })
 

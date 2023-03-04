@@ -2,6 +2,8 @@ import { BaseEntity, BeforeUpdate, Column, CreateDateColumn, Entity, ManyToOne, 
 import { Category } from "./Category"
 import { User } from "./User"
 import { Review } from "./Review"
+import { CartItem } from "./cartItem"
+
 
 @Entity("products")
 export class Product extends BaseEntity {
@@ -45,4 +47,7 @@ export class Product extends BaseEntity {
 
     @OneToMany(() => Review, (review) => review.product)
     reviews: Review[]
+
+    @OneToMany(() => CartItem, (cartItem) => cartItem.product)
+    cartItem: CartItem;
 }                                                                               

@@ -1,11 +1,11 @@
-import { TestDevSource } from "../data-source";
+import { AppDataSource } from "../data-source";
 import { User } from "../entity/User";
 
 export const verifyCallback = async (_accessToken: any, _refreshToken: any, profile: any, done: any) => {
     const { id, emails } = profile;
     const vf = emails[0].verified
 
-    const query = TestDevSource
+    const query = AppDataSource
         .getRepository(User)
         .createQueryBuilder("user")
         .where("user.googleId = :id", { id })

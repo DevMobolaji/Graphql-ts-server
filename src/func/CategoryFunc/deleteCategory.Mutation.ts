@@ -1,4 +1,4 @@
-import { TestDevSource } from "../../data-source"
+import { AppDataSource } from "../../data-source"
 import { Category } from "../../entity/Category"
 import { GraphQLError } from "graphql/error/GraphQLError"
 
@@ -14,7 +14,7 @@ export const deleteCategoryMutation = async (id: any) => {
         })
     }
 
-    await TestDevSource
+    await AppDataSource
         .createQueryBuilder()
         .delete()
         .from(Category)

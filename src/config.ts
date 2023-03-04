@@ -16,6 +16,8 @@ interface ENV {
   MONGO_URI: string | undefined;
   CLIENT_ID: string | undefined;
   SECRET_CLIENT: string | undefined;
+  EMAIL: string | undefined;
+  PASSWORD: string | undefined;
 }
 
 interface Config {
@@ -26,6 +28,8 @@ interface Config {
   MONGO_URI: string;
   CLIENT_ID: string;
   SECRET_CLIENT: string;
+  EMAIL: string;
+  PASSWORD: string;
 }
 
 // Loading process.env as ENV interface
@@ -38,7 +42,9 @@ const getConfig = (): ENV => {
     TEST_HOST: process.env.TEST_HOST || undefined,
     MONGO_URI: process.env.MONGO_URI,
     CLIENT_ID: process.env.CLIENT_ID,
-    SECRET_CLIENT: process.env.SECRET_CLIENT
+    SECRET_CLIENT: process.env.SECRET_CLIENT,
+    EMAIL: process.env.EMAIL,
+    PASSWORD: process.env.PASSWORD,
   };
 };
 
