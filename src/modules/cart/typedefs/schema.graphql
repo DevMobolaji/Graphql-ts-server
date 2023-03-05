@@ -44,15 +44,15 @@ type Cart {
 
 
 type Query {
-    Cart: [Cart!]!
-    CartById(id: ID!): Cart
+    carts: [Cart!]!
 }
 
 input addToCartInput {
   productId: String!
-  quantity: Int!
+  quantity: Int
 }
 
 type Mutation {
-  addItem(input: addToCartInput): Cart
+  addItem(input: addToCartInput!): Cart!
+  removeFromCart(cartItemId: ID!): Boolean!
 }

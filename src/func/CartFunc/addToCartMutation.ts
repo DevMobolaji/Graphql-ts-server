@@ -36,7 +36,7 @@ export const createCartFunc = async (productId: any, quantity: any, userId: any)
             .insert()
             .into(CartItem)
             .values([
-                { quantity: quantity, product: productId, cart: cart },
+                { quantity, product: productId, cart: cart },
             ])
             .returning("*")
             .execute()
