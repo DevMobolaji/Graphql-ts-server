@@ -1,13 +1,11 @@
 
-
 import { Cart } from "../../entity/Cart";
-
-
 import { CartItem } from "../../entity/cartItem";
 import { resolverMap } from "../../types/graphql-utils";
 import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
 import { requiresAuth } from "../../MiddlewareFunc/middlewareFunc";
 import { createCartFunc } from "../../func/CartFunc/addToCartMutation";
+import { removeFromCartFunc } from "../../func/CartFunc/removeFromCartMutation";
 
 export const resolvers: resolverMap = {
     Cart: {
@@ -22,14 +20,15 @@ export const resolvers: resolverMap = {
     },
 
     Query: {
-        Cart: async () => {
-            const cartItem = await Cart.find({
-                relations: {
-                    items: true,
-                    user: true
-                }
+        carts: async (_, __, { session }) => {
+            const { userId } = session;
+
+            const cart = await Cart.findOne({
+                where: { user: { id: userId } },
+                relations: ['items.product', "user"]
             })
-            return cartItem
+
+            return cart?.items
         }
     },
 
@@ -42,6 +41,13 @@ export const resolvers: resolverMap = {
             if (!userId) return null;
             return await createCartFunc(productId, quantity, userId)
 
-        })
-    }
+        }),
+        removeFromCart: async (_, args, { session }) => {
+            const { cartItemId } = args
+            const { userId } = session;
+
+            if (!userId) return null;
+            return await removeFromCartFunc(cartItemId, userId)
+        }
+    },
 }

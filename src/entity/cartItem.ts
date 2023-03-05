@@ -13,6 +13,6 @@ export class CartItem extends BaseEntity {
     @Column("int", { default: 1 })
     quantity: number
 
-    @ManyToOne(() => Cart, (cart) => cart.items)
+    @ManyToOne(() => Cart, (cart) => cart.items, { onDelete: "CASCADE" })
     cart: Cart;
 }

@@ -10,9 +10,6 @@ export class Cart extends BaseEntity {
     @ManyToOne(() => User, user => user.carts)
     user: User;
 
-    @OneToMany(() => CartItem, (cartitem) => cartitem.cart, {
-        cascade: true,
-        eager: true,
-    })
+    @OneToMany(() => CartItem, (cartitem) => cartitem.cart)
     items: CartItem[];
-}
+}   
