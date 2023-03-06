@@ -7,7 +7,7 @@ export class CartItem extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @ManyToOne(() => Product, (product) => product.cartItem)
+    @ManyToOne(() => Product, (product) => product.cartItem, { onDelete: "CASCADE" })
     product: Product;
 
     @Column("int", { default: 1 })
