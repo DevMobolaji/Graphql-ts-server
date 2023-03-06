@@ -8,17 +8,27 @@ import { updateProductMutation } from "../../func/ProductFunc/updateProduct.Muta
 import { Review } from "../../entity/Review";
 import { deleteProductMutation } from "../../func/ProductFunc/deleteProduct.Mutation";
 import { MutationAddProductArgs, MutationDeleteProductArgs, MutationUpdateProductArgs, QueryProductArgs } from "../../generated-types/graphql";
+import { Category } from "../../entity/Category";
 
 export const resolvers: resolverMap = {
     Product: {
-        reviews: async (parent) => {
+        reviews: createMiddleware(requiresAuth, async (parent) => {
             const review = await Review.find({
                 relations: {
                     product: true
                 }
             })
             return review.filter((review) => review.product.id === parent.id)
-        },
+        }),
+        category: createMiddleware(requiresAuth, async (parent) => {
+            const category = await Category.find({
+                relations: {
+                    products: true
+                }
+            })
+            return category.find((category) => category.id === parent.category)
+        }),
+
     },
 
     Query: {

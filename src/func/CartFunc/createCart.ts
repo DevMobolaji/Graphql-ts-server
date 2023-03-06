@@ -10,8 +10,7 @@ export const createCart = async (userId: any) => {
         const res = Cart.create({
             user: (userId as any), items: []
         })
-        await res.save()
-        return res
+        return res.save()
     }
 
     return cart

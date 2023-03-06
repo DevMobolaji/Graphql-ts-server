@@ -44,7 +44,7 @@ type Cart {
 
 
 type Query {
-    carts: [Cart!]!
+    carts: [Cart!]
 }
 
 input addToCartInput {

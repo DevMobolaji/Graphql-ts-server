@@ -1,6 +1,6 @@
 import { CartItem } from "../../entity/cartItem";
 
-export const removeFromCartFunc = async (cartItemId: any, userId: any) => {
+export const removeFromCartFunc = async (cartItemId: string, userId: string) => {
     const cartitm = await CartItem.findOne({ where: { id: cartItemId, cart: { user: { id: userId } } }, relations: ['cart.items'] })
 
     //Check if the cart item exists

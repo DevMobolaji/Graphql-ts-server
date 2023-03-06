@@ -5,9 +5,20 @@ import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
 import { requiresAuth, requiresAuth_AdminAccess } from "../../MiddlewareFunc/middlewareFunc";
 import { updateCategoryMutation } from "../../func/CategoryFunc/updateCategory.Mutation";
 import { deleteCategoryMutation } from "../../func/CategoryFunc/deleteCategory.Mutation";
+import { Product } from "../../entity/Products";
 
 
 export const resolvers: resolverMap = {
+    Category: {
+        products: createMiddleware(requiresAuth, async (parent) => {
+            const product = await Product.find({
+                relations: {
+                    category: true
+                }
+            })
+            return product.filter((product) => product.category.id === parent.id)
+        })
+    },
     Query: {
         categories: createMiddleware(requiresAuth, async (_, __, { session }) => {
             const { userId } = session;

@@ -5,14 +5,9 @@ import { CartItem } from "../../entity/cartItem";
 import { createCart } from "./createCart";
 
 
-export const createCartFunc = async (productId: any, quantity: any, userId: any) => {
+export const createCartFunc = async (productId: any, quantity: number, userId: string) => {
     const product = await Product.findOne({
-        where: { id: productId },
-        relations: {
-            category: true,
-            reviews: true,
-            user: true
-        }
+        where: { id: productId }
     })
 
     if (!product) {
@@ -26,7 +21,7 @@ export const createCartFunc = async (productId: any, quantity: any, userId: any)
 
     const cart = await createCart(userId)
 
-    const existingCartItem = cart?.items.find((cartItem: { product: { id: any; }; }) => cartItem.product.id === productId)
+    const existingCartItem = cart?.items.find((cartItem: { product: { id: string; }; }) => cartItem.product.id === productId)
     if (existingCartItem) {
         existingCartItem.quantity += quantity;
         await existingCartItem.save()
@@ -40,7 +35,8 @@ export const createCartFunc = async (productId: any, quantity: any, userId: any)
             ])
             .returning("*")
             .execute()
-        cart.items.push(newCart.raw);
+        const rew = newCart.raw.map((cartItem: any) => cartItem)
+        cart.items.push(rew[0]);
     }
     return cart;
 }
