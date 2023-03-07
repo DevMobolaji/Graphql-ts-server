@@ -4,11 +4,16 @@
    "description": "",
    "main": "index.js",
    "scripts": {
+      "watch": "yarn run start && yarn run client",
+      "deploy": "npm run build --prefix client && yarn run start",
+      "deploy-cluster": "npm run build --prefix client && yarn run server-cluster",
       "start": "nodemon --exec ts-node --files src/index.ts",
-      "test-server": "nodemon --exec ts-node --files src/index.ts",
-      "test": "jest --detectOpenHandles --forceExit",
-      "watch": "tsc -w",
-      "generate": "graphql-codegen"
+      "server-cluster": "pm2 start src/index.ts -i max",
+      "client": "npm start --prefix client",
+      "test": "jest --detectOpenHandles --forceExit && npm test --prefix client",
+      "devtest": "jest --detectOpenHandles --forceExit",
+      "generate": "graphql-codegen",
+      "test-server": "nodemon --exec ts-node --files src/index.ts"
    },
    "keywords": [],
    "author": "",

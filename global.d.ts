@@ -9,5 +9,6 @@ declare namespace NodeJS {
     SECRET_CLIENT: string
     EMAIL: string
     PASSWORD: string
+    SESSION_NAME: string
   }
 }

@@ -82,7 +82,7 @@ export const startServer = async () => {
             store: new RedisStore({
                 client: redis, prefix: redisSessionPrefix
             }),
-            name: "qid",
+            name: sanitizedConfig.SESSION_NAME,
             secret: sanitizedConfig.SECRET_CLIENT,
             resave: false,
             saveUninitialized: false,
@@ -97,7 +97,7 @@ export const startServer = async () => {
     );
 
     app.use(morgan('combined'))
-    app.use("",
+    app.use("/graphql",
         cors<cors.CorsRequest>({
             origin: sanitizedConfig.NODE_ENV === "test" ? "*" : "http://localhost:5000/",
             credentials: true
@@ -107,6 +107,8 @@ export const startServer = async () => {
             context: async ({ req }) => ({ redis, req: req, session: req.session, url: req.protocol + "://" + req.get("host") })
         })
     );
+    app.use(express.static("public"))
+    app.use("*", express.static("public"))
 
     app.get("/auth/google",
         passport.authenticate("google", {
@@ -136,6 +138,11 @@ export const startServer = async () => {
     })
 
     app.use(limiter);
+
+
+    // app.get("/*", (res: Response) => {
+    //     res.sendFile(path.join(__dirname, "../public", "index.html"));
+    // });
 
     await new Promise<void>((resolve) => httpServer.listen({ port: sanitizedConfig.PORT }, resolve))
     console.log(`🚀 Server ready at http://localhost:4000/`);

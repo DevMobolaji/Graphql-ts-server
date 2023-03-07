@@ -18,6 +18,7 @@ interface ENV {
   SECRET_CLIENT: string | undefined;
   EMAIL: string | undefined;
   PASSWORD: string | undefined;
+  SESSION_NAME: string | undefined;
 }
 
 interface Config {
@@ -30,6 +31,7 @@ interface Config {
   SECRET_CLIENT: string;
   EMAIL: string;
   PASSWORD: string;
+  SESSION_NAME: string;
 }
 
 // Loading process.env as ENV interface
@@ -45,6 +47,7 @@ const getConfig = (): ENV => {
     SECRET_CLIENT: process.env.SECRET_CLIENT,
     EMAIL: process.env.EMAIL,
     PASSWORD: process.env.PASSWORD,
+    SESSION_NAME: process.env.SESSION_NAME
   };
 };
 
