@@ -99,7 +99,7 @@ export const startServer = async () => {
     app.use(morgan('combined'))
     app.use("/graphql",
         cors<cors.CorsRequest>({
-            origin: sanitizedConfig.NODE_ENV === "test" ? "*" : "http://localhost:5000/",
+            origin: "*",
             credentials: true
         }),
         json(),
