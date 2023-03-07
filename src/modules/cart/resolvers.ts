@@ -1,10 +1,11 @@
-import { Cart } from "../../entity/Cart";
+
 import { CartItem } from "../../entity/cartItem";
 import { resolverMap } from "../../types/graphql-utils";
 import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
 import { requiresAuth } from "../../MiddlewareFunc/middlewareFunc";
 import { createCartFunc } from "../../func/CartFunc/addToCartMutation";
 import { removeFromCartFunc } from "../../func/CartFunc/removeFromCartMutation";
+import { Cart } from "../../entity/Cart";
 
 
 export const resolvers: resolverMap = {

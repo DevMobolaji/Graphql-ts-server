@@ -88,7 +88,7 @@ export const startServer = async () => {
             saveUninitialized: false,
             cookie: {
                 httpOnly: true,
-                secure: false,
+                secure: true,
                 //secure: sanitizedConfig.NODE_ENV === "production",
                 maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
                 sameSite: "None"
