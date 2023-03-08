@@ -6,11 +6,11 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 const client = new ApolloClient({
   uri: 'http://localhost:3000/graphql',
   cache: new InMemoryCache(),
-  defaultOptions: {
-    watchQuery: {
-      nextFetchPolicy: 'cache-only',
-    },
-  }
+  // defaultOptions: {
+  //   watchQuery: {
+  //     nextFetchPolicy: 'cache-only',
+  //   },
+  // }
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

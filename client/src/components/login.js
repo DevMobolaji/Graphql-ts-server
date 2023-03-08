@@ -1,35 +1,53 @@
-import React from 'react'
-import { useQuery, gql } from '@apollo/client';
+import React, { useState } from 'react'
+import { useMutation, gql } from '@apollo/client';
 
 const Login = () => {
-    const LOGIN_USER = gql`
-    query {
-    carts {
-        id
-      cartItem {
-          id
-          product {
-              name
-              quantity
-              price
-              image
-          }
-          quantity
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const USER_LOGIN = gql`
+    mutation Login($input: CreateUserInput!) {
+      Login(input: $input) {
+          message
+          path
       }
     }
-}
   `
-    const { loading, data, error } = useQuery(LOGIN_USER)
-    console.log(error)
-    console.log(loading)
-    console.log(data)
-    if (loading) {
-        return <div><h2>loading</h2></div>
+  const [Login] = useMutation(USER_LOGIN);
+  
+  function handleSubmit(event) {
+  event.preventDefault();
+
+  Login({ variables: {
+    "input": {
+      "email": email,
+      "password": password
     }
-    return (
-    
-    <div>login</div>
-  )
+}})
+    .then(result => {
+      console.log(result.data);
+      // Handle successful form submission here
+    })
+    .catch(error => {
+      console.error(error);
+      // Handle form submission error here
+    });
+  }
+  
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+      <label>Email:</label>
+      <input type="email" value={email} onChange={event => setEmail( event.target.value )} />
+
+      <label>password:</label>
+      <input type="password" value={password} onChange={event => setPassword(event.target.value)} />
+
+
+      <button type="submit">Submit</button>
+        </form>
+      </div>
+    )
 }
 
 export default Login

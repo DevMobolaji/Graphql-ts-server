@@ -28,9 +28,14 @@ const ForgotPasswordLockError = [
 
 export const resolvers: resolverMap = {
     Mutation: {
-        login: async (_, args, { session, redis, req }) => {
-            const { email, password } = args;
+        Login: async (_, args, { session, redis, req }) => {
+            const { input } = args
+            const { email, password } = input;
             const user = await User.findOne({ where: { email } })
+
+            if (!email || !password) {
+                return InvalidLogin
+            }
 
             if (!user) {
                 return InvalidLogin
