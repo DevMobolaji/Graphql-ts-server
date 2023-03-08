@@ -11,6 +11,7 @@ export const createProdMutation = async (name: string, description: string, pric
             }]
         }
         const id = categoryId
+        console.log(id)
 
         const category = await Category.findOne({
             where: { id }, relations: {
@@ -46,5 +47,5 @@ export const createProdMutation = async (name: string, description: string, pric
 
     const product = Product.create({ name, description, image, onSale: onSale, quantity, price, category: categoryId, user: userId })
     await product.save()
-    return product
+    return null
 }

@@ -1,6 +1,5 @@
 import { resolverMap } from "../../types/graphql-utils";
 import { getAllProduct, getProductByFilter, getProductById } from "../../func/ProductFunc/getAllProducts.Query";
-import { createProdMutation } from "../../func/ProductFunc/createProd.Mutation";
 import { Product } from "../../entity/Products";
 import { createMiddleware } from "../../MiddlewareFunc/createMiddleware";
 import { requiresAuth_AdminAccess, requiresAuth } from "../../MiddlewareFunc/middlewareFunc"
@@ -9,6 +8,7 @@ import { Review } from "../../entity/Review";
 import { deleteProductMutation } from "../../func/ProductFunc/deleteProduct.Mutation";
 import { MutationAddProductArgs, MutationDeleteProductArgs, MutationUpdateProductArgs, QueryProductArgs } from "../../generated-types/graphql";
 import { Category } from "../../entity/Category";
+import { createProdMutation } from "../../func/ProductFunc/createProd.Mutation";
 
 export const resolvers: resolverMap = {
     Product: {

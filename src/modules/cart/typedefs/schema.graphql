@@ -38,8 +38,8 @@ type Cart {
     id: ID!
     user: User!
     cartItem: [CartItem!]!
-    totalItem: Int
-    subTotal: Int
+    totalItem: Float!
+    subTotal: Float!
 }
 
 

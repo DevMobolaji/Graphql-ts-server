@@ -62,7 +62,7 @@ type Query {
 }
 
 type Mutation {
-    AddProduct(input: AddProductInput!): Product!
+    AddProduct(input: AddProductInput!): [Error!]
     updateProduct(id: ID!, input: UpdateProductInput!): Product!
     deleteProduct(id: ID!): Boolean!
 }
