@@ -11,36 +11,31 @@ import { CartItem } from "../../entity/cartItem";
 
 export const resolvers: resolverMap = {
     Cart: {
-        cartItem: async () => {
-            const cartitem = await CartItem.find({
+        cartItem: createMiddleware(requiresAuth, async (_, __, { session }) => {
+            const { userId } = session
+            const cartitem = await CartItem.findOne({
+                where: { cart: { user: { id: userId } } },
                 relations: {
                     product: true
                 }
             })
             return cartitem
-        }
+        })
     },
 
     Query: {
-        // carts: createMiddleware(requiresAuth, async (_, __, { session }) => {
-        //     const { userId } = session;
+        carts: createMiddleware(requiresAuth, async (_, __, { session }) => {
+            const { userId } = session;
 
-        //     const cart = await Cart.findOne({
-        //         where: { user: { id: userId } },
-        //         relations: ['items', 'items.product']
-        //     })
-
-        //     if (!userId) return null;
-
-        //     return cart?.items
-        // })
-        carts: async (_, __,) => {
-            const cart = await Cart.find({
+            const cart = await Cart.findOne({
+                where: { user: { id: userId } },
                 relations: ['items', 'items.product']
             })
-            console.log(cart)
-            return cart
-        }
+
+            if (!userId) return null;
+
+            return cart?.items
+        }),
     },
 
     Mutation: {

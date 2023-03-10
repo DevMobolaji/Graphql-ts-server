@@ -1,6 +1,7 @@
 import React from 'react'
+import { useQuery, gql } from '@apollo/client';
 
-const cart = () => {
+const Cart = () => {
     const LOGIN_USER = gql`
     query {
     carts {
@@ -25,20 +26,23 @@ const cart = () => {
     if (loading || !data) return 'Loading...';
   if (error) return `Error! ${error.message}`;
 
-  console.log(data)
-  const res = data.carts.map((cart) => (
-        <li key={cart.id}>
-          <h3>Cart #{cart.id}</h3>
-          <ul>
-            {cart.cartItems.map((item) => (
-              <li key={item.id}>
-                {item.product.name} x {item.quantity} (${item.product.price})
-              </li>
-            ))}
-          </ul>
-        </li>
-  ))
+  const res = data.carts.map((cart) => cart)
   console.log(res)
+  const dt = res.map((item) => item)
+  console.log(dt)
+  // const res = data.carts.map((cart) => (
+  //       <li key={cart.id}>
+  //         <h3>Cart #{cart.id}</h3>
+  //         <ul>
+  //           {cart.cartItems.map((item) => (
+  //             <li key={item.id}>
+  //               {item.product.name} x {item.quantity} (${item.product.price})
+  //             </li>
+  //           ))}
+  //         </ul>
+  //       </li>
+  // ))
+  // console.log(res)
   return (
     <ul>
       {}
@@ -46,4 +50,4 @@ const cart = () => {
   );
 }
 
-export default cart
+export default Cart

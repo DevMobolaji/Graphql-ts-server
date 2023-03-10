@@ -4,11 +4,6 @@ type User {
   # ... other fields ...
 }
 
-type Category {
-    id: ID!
-    name: String!
-}
-
 type Product {
     id: ID!
     name: String!
@@ -16,9 +11,7 @@ type Product {
     price: Float!
     image: String!
     quantity: Int!
-    category: Category
     user: User
-    # reviews: [Review!]
 }
 
 type CartItem {
@@ -37,7 +30,7 @@ type CartItem {
 type Cart {
     id: ID!
     user: User!
-    cartItem: [CartItem!]!
+    cartItem: CartItem!
     totalItem: Float!
     subTotal: Float!
 }

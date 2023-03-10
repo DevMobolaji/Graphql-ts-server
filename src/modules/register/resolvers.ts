@@ -7,7 +7,6 @@ import { createConfirmEmailLinkUrl } from "../../utils/createConfirmEmailLink";
 import { formatYupError } from "../../utils/formatYupError";
 import { registerPasswordValidation } from "../../yupSchema";
 
-
 const schema = yup.object().shape({
     email: yup.string()
         .email(invalidEmail)
@@ -26,6 +25,7 @@ export const resolvers: resolverMap = {
                 return formatYupError(error)
             }
             const { email, password } = args;
+
             const userAlredyExists = await User.findOne({ where: { email } })
 
             if (userAlredyExists) {

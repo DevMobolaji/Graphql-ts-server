@@ -29,7 +29,7 @@ const Login = () => {
       // Handle successful form submission here
     })
     .catch(error => {
-      console.error(error);
+      console.error(error.message);
       // Handle form submission error here
     });
   }
@@ -45,6 +45,7 @@ const Login = () => {
 
 
       <button type="submit">Submit</button>
+      <a href="/auth/google">Google login</a>
         </form>
       </div>
     )
