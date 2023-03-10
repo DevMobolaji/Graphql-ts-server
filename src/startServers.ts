@@ -75,8 +75,8 @@ export const startServer = async () => {
 
     passport.use(new Strategy(AUTH_OPTIONS, verifyCallback));
 
+    app.set("trust proxy", true)
     //EXPRESS MIDDLEWARE
-    app.use(helmet());
     app.use(
         session({
             store: new RedisStore({
@@ -91,24 +91,26 @@ export const startServer = async () => {
                 secure: false,
                 //secure: sanitizedConfig.NODE_ENV === "production",
                 maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-                sameSite: "None"
+                sameSite: "none"
             }
-        } as any)
+        })
     );
 
+    app.use(helmet());
     app.use(morgan('combined'))
     app.use("/graphql",
         cors<cors.CorsRequest>({
-            origin: "*",
-            credentials: true
+            credentials: true,
+            origin: "http://localhost:3001",
         }),
         json(),
         expressMiddleware(server, {
             context: async ({ req }) => ({ redis, req: req, session: req.session, url: req.protocol + "://" + req.get("host") })
         })
     );
-    app.use(express.static("public"))
-    app.use("*", express.static("public"))
+
+    // app.use(express.static("public"))
+    // app.use("*", express.static("public"))
 
     app.get("/auth/google",
         passport.authenticate("google", {
