@@ -24,8 +24,8 @@ const Cart = () => {
     if (loading || !data) return 'Loading...';
   if (error) return `Error! ${error.message}`;
 
-  const listItems = data.carts.map((d) =>
-    <li key={d.name}>
+  const listItems = data.carts.map((d: { cartItem: { quantity: number | React.Key | null | undefined; product: { name: string | null | undefined; price: string | number | boolean | null | undefined; }; }; }) =>
+    <li key={d.cartItem.quantity}>
       {d.cartItem.product.name} - {d.cartItem.product.price} - {d.cartItem.quantity} 
     </li>);
 
