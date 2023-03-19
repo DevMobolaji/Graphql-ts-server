@@ -1,7 +1,7 @@
 import React from 'react'
 import { useQuery, gql } from '@apollo/client';
 
-const Cart = (): JSX.Element => {
+const Cart: React.FC = (): JSX.Element => {
   const LOGIN_USER = gql`
     query {
     carts {
