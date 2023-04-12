@@ -76,7 +76,7 @@
       "rate-limit-redis": "^3.0.1",
       "reflect-metadata": "^0.1.13",
       "ts-jest": "^29.0.5",
-      "typeorm": "0.3.11",
+      "typeorm": "0.3.14",
       "yup": "^0.32.11"
    }
 }
